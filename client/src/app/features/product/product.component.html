@@ -117,34 +117,6 @@
           </section>
         }
 
-        <!-- ── Ingredients ────────────────────────────────────────────────── -->
-        @if (p.ingredients.length > 0) {
-          <section class="section">
-            <div class="section-header">
-              <h2 class="section-title">Убрать ингредиенты</h2>
-            </div>
-            <div class="ingredients-grid">
-              @for (ing of p.ingredients; track ing.id) {
-                <button
-                  class="ingredient-chip"
-                  [class.removed]="removedIngredientIds().has(ing.id)"
-                  (click)="toggleIngredient(ing.id)"
-                  [attr.aria-pressed]="removedIngredientIds().has(ing.id)"
-                  [attr.aria-label]="(removedIngredientIds().has(ing.id) ? 'Вернуть: ' : 'Убрать: ') + ing.name"
-                >
-                  {{ ing.name }}
-                  @if (!removedIngredientIds().has(ing.id)) {
-                    <svg class="chip-remove-icon" width="11" height="11" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true">
-                      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                  }
-                </button>
-              }
-            </div>
-          </section>
-        }
-
         <!-- ── Addons ─────────────────────────────────────────────────────── -->
         @if (p.addons.length > 0) {
           <section class="section">
@@ -173,6 +145,34 @@
                       </svg>
                     }
                   </span>
+                </button>
+              }
+            </div>
+          </section>
+        }
+
+        <!-- ── Ingredients ────────────────────────────────────────────────── -->
+        @if (p.ingredients.length > 0) {
+          <section class="section">
+            <div class="section-header">
+              <h2 class="section-title">Убрать ингредиенты</h2>
+            </div>
+            <div class="ingredients-grid">
+              @for (ing of p.ingredients; track ing.id) {
+                <button
+                  class="ingredient-chip"
+                  [class.removed]="removedIngredientIds().has(ing.id)"
+                  (click)="toggleIngredient(ing.id)"
+                  [attr.aria-pressed]="removedIngredientIds().has(ing.id)"
+                  [attr.aria-label]="(removedIngredientIds().has(ing.id) ? 'Вернуть: ' : 'Убрать: ') + ing.name"
+                >
+                  {{ ing.name }}
+                  @if (!removedIngredientIds().has(ing.id)) {
+                    <svg class="chip-remove-icon" width="11" height="11" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true">
+                      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                  }
                 </button>
               }
             </div>
