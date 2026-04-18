@@ -18,7 +18,7 @@ public class ProductService(IProductRepository repo) : IProductService
         var p = await repo.GetByIdAsync(id, ct);
         if (p is null) return null;
 
-        var recommendations = await repo.GetPopularAsync(7, ct);
+        var recommendations = await repo.GetPopularAsync(11, ct);
 
         return new ProductDetailDto(
             p.Id, p.CategoryId, p.Name, p.Description, p.ImageUrl,
@@ -27,7 +27,7 @@ public class ProductService(IProductRepository repo) : IProductService
             p.Sizes.OrderBy(s => s.SortOrder).Select(s => new ProductSizeDto(s.Id, s.Label, s.PriceDelta, s.WeightGrams)).ToList(),
             p.Addons.OrderBy(a => a.SortOrder).Select(a => new ProductAddonDto(a.Id, a.Name, a.Price, a.ImageUrl)).ToList(),
             p.Ingredients.OrderBy(i => i.SortOrder).Select(i => new ProductIngredientDto(i.Id, i.Name)).ToList(),
-            recommendations.Where(r => r.Id != id).Take(6).Select(ToDto).ToList()
+            recommendations.Where(r => r.Id != id).Take(10).Select(ToDto).ToList()
         );
     }
 

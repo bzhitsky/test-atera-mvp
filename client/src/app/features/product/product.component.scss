@@ -390,7 +390,7 @@
   display: flex;
   gap: 12px;
   overflow-x: auto;
-  padding-bottom: 4px;
+  padding: 6px 4px 4px 4px;
   scrollbar-width: none;
   -ms-overflow-style: none;
 
@@ -409,9 +409,7 @@
   &:hover,
   &:focus-visible {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    outline: 2px solid var(--fo-primary);
-    outline-offset: 2px;
+    box-shadow: 0 0 0 2px var(--fo-primary), 0 6px 20px rgba(0, 0, 0, 0.1);
   }
 }
 
