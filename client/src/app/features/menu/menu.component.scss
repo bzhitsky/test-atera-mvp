@@ -30,8 +30,21 @@
   @media (min-width: 1024px) {
     flex: 1;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     min-height: 0;
+  }
+}
+
+// ── Left column (header + menu) ───────────────────────────────────────────────
+.menu-left {
+  @media (min-width: 1024px) {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-height: 0;
+    overflow: hidden;
   }
 }
 
@@ -41,11 +54,12 @@
   border-bottom: 1px solid var(--fo-border);
 
   @media (min-width: 1024px) {
-    margin: 40px 40px 0;
+    margin: 40px 20px 0;
     border-radius: var(--fo-radius);
     border-bottom: none;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
     flex-shrink: 0;
+    // header is now inside .menu-left — stays within the menu column only
   }
 }
 
@@ -169,28 +183,16 @@
   pointer-events: none;
 }
 
-// ── Page body ─────────────────────────────────────────────────────────────────
-.page-body {
-  display: flex;
-  gap: 20px;
-  padding: 0;
-
-  @media (min-width: 1024px) {
-    flex: 1;
-    min-height: 0;
-    padding: 16px 40px 20px;
-    overflow: hidden;
-  }
-}
-
 // ── Menu area ─────────────────────────────────────────────────────────────────
 .menu-area {
   flex: 1;
   min-width: 0;
 
   @media (min-width: 1024px) {
-    overflow-y: auto;
+    flex: 1;
     min-height: 0;
+    overflow-y: auto;
+    padding: 0 20px 40px;
     scrollbar-width: thin;
     scrollbar-color: var(--fo-border) transparent;
 
@@ -322,7 +324,7 @@
   padding: 20px 16px 100px;
 
   @media (min-width: 1024px) {
-    padding: 20px 0 40px;
+    padding: 20px 0 0;
   }
 }
 
@@ -557,17 +559,19 @@
 
 // ── Cart sidebar ──────────────────────────────────────────────────────────────
 .cart-sidebar {
-  width: 360px;
+  width: 400px;
   flex-shrink: 0;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--fo-border) transparent;
-
-  &::-webkit-scrollbar { width: 4px; }
-  &::-webkit-scrollbar-thumb { background: var(--fo-border); border-radius: 2px; }
+  display: flex;
+  flex-direction: column;
+  padding: 40px 40px 40px 0;
 }
 
 .cart-panel {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--fo-border) transparent;
   background: var(--fo-surface);
   border-radius: var(--fo-radius);
   padding: 20px;
@@ -575,6 +579,9 @@
   flex-direction: column;
   gap: 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-thumb { background: var(--fo-border); border-radius: 2px; }
 }
 
 .cart-panel-title {
