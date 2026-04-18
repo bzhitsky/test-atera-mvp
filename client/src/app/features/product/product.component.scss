@@ -207,38 +207,35 @@
 // ── Size picker ───────────────────────────────────────────────────────────────
 .size-picker {
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+  background: #eceeed;
+  border-radius: 14px;
+  padding: 4px;
+  gap: 0;
 }
 
 .size-btn {
   flex: 1;
-  min-width: 64px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 10px 8px;
-  border: 2px solid var(--fo-border);
-  border-radius: var(--fo-radius-sm);
-  background: var(--fo-surface);
+  justify-content: center;
+  padding: 16px 8px;
+  border: none;
+  border-radius: 11px;
+  background: transparent;
   cursor: pointer;
-  transition: border-color 0.2s, background 0.2s, color 0.2s, transform 0.1s;
+  transition: background 0.2s, color 0.2s;
   font-family: inherit;
-
-  &:hover:not(.active) { border-color: var(--fo-primary); }
-  &:active { transform: scale(0.96); }
+  color: var(--fo-text);
 
   &.active {
-    border-color: var(--fo-primary);
     background: var(--fo-primary);
     color: #fff;
   }
 }
 
-.size-label  { font-size: 18px; font-weight: 700; line-height: 1; }
-.size-delta  { font-size: 12px; font-weight: 600; opacity: 0.85; }
-.size-weight { font-size: 11px; opacity: 0.7; }
+.size-label  { font-size: 16px; font-weight: 500; line-height: 1; }
+.size-delta  { display: none; }
+.size-weight { display: none; }
 
 // ── Ingredient chips ──────────────────────────────────────────────────────────
 .ingredients-grid {
