@@ -1,0 +1,328 @@
+<div class="checkout-page">
+
+  <!-- ── Header ──────────────────────────────────────────────────────────── -->
+  <header class="checkout-header">
+    <button class="back-btn" (click)="goBack()" aria-label="Назад">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+    <h1 class="checkout-title">Оформление заказа</h1>
+    <span class="header-spacer"></span>
+  </header>
+
+  <div class="checkout-content">
+
+    <!-- ── 1. Тип доставки ─────────────────────────────────────────────── -->
+    <section class="section">
+      <h2 class="section-title">Способ получения</h2>
+      <div class="type-toggle" role="radiogroup" aria-label="Способ получения">
+        <button
+          class="type-btn"
+          [class.type-btn--active]="deliveryType() === 'Delivery'"
+          (click)="setDeliveryType('Delivery')"
+          role="radio"
+          [attr.aria-checked]="deliveryType() === 'Delivery'"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="1" y="3" width="15" height="13" rx="2"/>
+            <path d="M16 8h4l3 5v3h-7V8z"/>
+            <circle cx="5.5" cy="18.5" r="2.5"/>
+            <circle cx="18.5" cy="18.5" r="2.5"/>
+          </svg>
+          Доставка
+        </button>
+        <button
+          class="type-btn"
+          [class.type-btn--active]="deliveryType() === 'Pickup'"
+          (click)="setDeliveryType('Pickup')"
+          role="radio"
+          [attr.aria-checked]="deliveryType() === 'Pickup'"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 10c0 5.523-8 13-8 13S4 15.523 4 10a8 8 0 0 1 16 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          Самовывоз
+        </button>
+      </div>
+    </section>
+
+    <!-- ── 2. Адрес (только для доставки) ─────────────────────────────── -->
+    @if (isDelivery()) {
+      <section class="section">
+        <h2 class="section-title">Адрес доставки</h2>
+
+        @if (loadingAddresses()) {
+          <p class="hint">Загрузка адресов…</p>
+        }
+
+        @if (!loadingAddresses()) {
+          <!-- Saved addresses -->
+          @if (addresses().length > 0) {
+            <ul class="address-list" role="radiogroup">
+              @for (addr of addresses(); track addr.id) {
+                <li
+                  class="address-card"
+                  [class.address-card--selected]="selectedAddressId() === addr.id"
+                  (click)="selectAddress(addr.id)"
+                  role="radio"
+                  [attr.aria-checked]="selectedAddressId() === addr.id"
+                  tabindex="0"
+                  (keydown.enter)="selectAddress(addr.id)"
+                  (keydown.space)="selectAddress(addr.id)"
+                >
+                  <div class="address-radio">
+                    <div class="radio-outer">
+                      @if (selectedAddressId() === addr.id) {
+                        <div class="radio-inner"></div>
+                      }
+                    </div>
+                  </div>
+                  <div class="address-info">
+                    <p class="address-street">{{ addr.street }}</p>
+                    @if (addr.apartment || addr.entrance || addr.floor) {
+                      <p class="address-details">
+                        @if (addr.apartment) { кв. {{ addr.apartment }} }
+                        @if (addr.entrance) { · под. {{ addr.entrance }} }
+                        @if (addr.floor) { · эт. {{ addr.floor }} }
+                      </p>
+                    }
+                  </div>
+                </li>
+              }
+            </ul>
+          }
+
+          <!-- New address form toggle -->
+          @if (!showAddressForm()) {
+            <button class="add-address-btn" (click)="openAddressForm()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Добавить новый адрес
+            </button>
+          }
+
+          <!-- New address form -->
+          @if (showAddressForm()) {
+            <div class="address-form">
+              <div class="form-group">
+                <label class="form-label" for="street">Улица и дом *</label>
+                <input
+                  id="street"
+                  class="form-input"
+                  type="text"
+                  placeholder="ул. Пушкина, д. 10"
+                  [(ngModel)]="newStreet"
+                  autocomplete="street-address"
+                />
+              </div>
+              <div class="form-row">
+                <div class="form-group form-group--sm">
+                  <label class="form-label" for="apartment">Квартира</label>
+                  <input id="apartment" class="form-input" type="text" placeholder="42" [(ngModel)]="newApartment"/>
+                </div>
+                <div class="form-group form-group--sm">
+                  <label class="form-label" for="entrance">Подъезд</label>
+                  <input id="entrance" class="form-input" type="text" placeholder="2" [(ngModel)]="newEntrance"/>
+                </div>
+                <div class="form-group form-group--sm">
+                  <label class="form-label" for="floor">Этаж</label>
+                  <input id="floor" class="form-input" type="text" placeholder="5" [(ngModel)]="newFloor"/>
+                </div>
+                <div class="form-group form-group--sm">
+                  <label class="form-label" for="intercom">Домофон</label>
+                  <input id="intercom" class="form-input" type="text" placeholder="42К" [(ngModel)]="newIntercom"/>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button class="form-cancel-btn" (click)="cancelAddressForm()" type="button">Отмена</button>
+                <button
+                  class="form-save-btn"
+                  (click)="saveNewAddress()"
+                  [disabled]="!newStreet.trim() || savingAddress()"
+                  type="button"
+                >
+                  {{ savingAddress() ? 'Сохранение…' : 'Сохранить' }}
+                </button>
+              </div>
+            </div>
+          }
+
+          @if (isDelivery() && !showAddressForm() && selectedAddressId() === null && addresses().length === 0) {
+            <p class="hint hint--error">Укажите адрес доставки</p>
+          }
+        }
+      </section>
+    }
+
+    <!-- ── 3. Время получения ───────────────────────────────────────────── -->
+    <section class="section">
+      <h2 class="section-title">Время {{ isDelivery() ? 'доставки' : 'самовывоза' }}</h2>
+
+      <div class="time-tabs" role="radiogroup">
+        <button
+          class="time-tab"
+          [class.time-tab--active]="timeMode() === 'asap'"
+          (click)="setTimeMode('asap')"
+          role="radio"
+          [attr.aria-checked]="timeMode() === 'asap'"
+        >
+          Как можно скорее
+        </button>
+        <button
+          class="time-tab"
+          [class.time-tab--active]="timeMode() === 'scheduled'"
+          (click)="setTimeMode('scheduled')"
+          role="radio"
+          [attr.aria-checked]="timeMode() === 'scheduled'"
+        >
+          Выбрать время
+        </button>
+      </div>
+
+      @if (timeMode() === 'scheduled') {
+        <div class="time-slots">
+          @for (t of pickupTimes; track t) {
+            <button
+              class="time-slot"
+              [class.time-slot--active]="selectedTime() === t"
+              (click)="selectedTime.set(t)"
+            >
+              {{ t }}
+            </button>
+          }
+        </div>
+      }
+
+      @if (timeMode() === 'asap') {
+        <p class="hint">~30–45 мин</p>
+      }
+    </section>
+
+    <!-- ── 4. Способ оплаты ─────────────────────────────────────────────── -->
+    <section class="section">
+      <h2 class="section-title">Способ оплаты</h2>
+      <div class="payment-options" role="radiogroup" aria-label="Способ оплаты">
+
+        <button
+          class="payment-card"
+          [class.payment-card--active]="paymentMethod() === 'SBP'"
+          (click)="setPayment('SBP')"
+          role="radio"
+          [attr.aria-checked]="paymentMethod() === 'SBP'"
+        >
+          <div class="payment-icon payment-icon--sbp">
+            <svg width="28" height="28" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+              <rect width="40" height="40" rx="8" fill="#1D1346"/>
+              <path d="M10 20.5 L17 27.5 L30 12.5" stroke="#00B956" stroke-width="3.5"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M17 12.5 L24 12.5 L30 20.5 L24 27.5 L17 27.5 L10 20.5 Z"
+                    fill="none" stroke="#00B956" stroke-width="2.5"/>
+            </svg>
+          </div>
+          <div class="payment-info">
+            <span class="payment-name">СБП</span>
+            <span class="payment-desc">Быстро по QR-коду</span>
+          </div>
+          <div class="payment-radio">
+            <div class="radio-outer" [class.radio-outer--active]="paymentMethod() === 'SBP'">
+              @if (paymentMethod() === 'SBP') {
+                <div class="radio-inner"></div>
+              }
+            </div>
+          </div>
+        </button>
+
+        <button
+          class="payment-card"
+          [class.payment-card--active]="paymentMethod() === 'Card'"
+          (click)="setPayment('Card')"
+          role="radio"
+          [attr.aria-checked]="paymentMethod() === 'Card'"
+        >
+          <div class="payment-icon payment-icon--card">
+            <svg width="28" height="28" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+              <rect width="40" height="40" rx="8" fill="#2563EB"/>
+              <rect x="7" y="12" width="26" height="16" rx="3" fill="none" stroke="#fff" stroke-width="2"/>
+              <rect x="7" y="17" width="26" height="4" fill="#fff" opacity="0.3"/>
+              <rect x="11" y="22" width="8" height="2.5" rx="1" fill="#fff" opacity="0.8"/>
+            </svg>
+          </div>
+          <div class="payment-info">
+            <span class="payment-name">Банковская карта</span>
+            <span class="payment-desc">Visa, Mastercard, МИР</span>
+          </div>
+          <div class="payment-radio">
+            <div class="radio-outer" [class.radio-outer--active]="paymentMethod() === 'Card'">
+              @if (paymentMethod() === 'Card') {
+                <div class="radio-inner"></div>
+              }
+            </div>
+          </div>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- ── 5. Комментарий ───────────────────────────────────────────────── -->
+    <section class="section">
+      <h2 class="section-title">Комментарий к заказу</h2>
+      <textarea
+        class="comment-input"
+        placeholder="Например: без лука, позвонить заранее…"
+        rows="3"
+        [(ngModel)]="comment"
+        maxlength="500"
+      ></textarea>
+    </section>
+
+    <!-- ── 6. Итог ──────────────────────────────────────────────────────── -->
+    <section class="section section--summary">
+      <h2 class="section-title">Ваш заказ</h2>
+      <ul class="order-items">
+        @for (item of items(); track item.productId + '-' + (item.sizeId ?? 0)) {
+          <li class="order-item">
+            <span class="order-item-name">
+              {{ item.product?.name }}
+              @if (item.sizeLabel) { <span class="order-item-size">· {{ item.sizeLabel }}</span> }
+            </span>
+            <span class="order-item-qty">× {{ item.quantity }}</span>
+            <span class="order-item-price">{{ item.unitPrice * item.quantity | number:'1.0-0' }}&thinsp;₽</span>
+          </li>
+        }
+      </ul>
+      <div class="summary-total">
+        <span class="summary-total-label">Итого</span>
+        <span class="summary-total-value">{{ total() | number:'1.0-0' }}&thinsp;₽</span>
+      </div>
+    </section>
+
+  </div><!-- /checkout-content -->
+
+  <!-- ── Footer / Submit ──────────────────────────────────────────────────── -->
+  <footer class="checkout-footer">
+    @if (submitError()) {
+      <p class="submit-error" role="alert">{{ submitError() }}</p>
+    }
+    <button
+      class="submit-btn"
+      [disabled]="!canSubmit()"
+      (click)="submit()"
+    >
+      @if (submitting()) {
+        Оформляем…
+      } @else {
+        Подтвердить заказ
+        <span class="submit-total">{{ total() | number:'1.0-0' }}&thinsp;₽</span>
+      }
+    </button>
+  </footer>
+
+</div>

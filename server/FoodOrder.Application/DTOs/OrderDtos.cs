@@ -50,3 +50,5 @@ public record CreateOrderRequest(
 );
 
 public record CreateReviewRequest(int Rating, string? Comment);
+
+public record UpdateOrderStatusRequest(string Status, string? Note);
