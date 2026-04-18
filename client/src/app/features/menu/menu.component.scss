@@ -917,3 +917,51 @@
   font-weight: 700;
   opacity: 0.9;
 }
+
+// ── Mobile sticky cart bar ─────────────────────────────────────────────────────
+.mobile-cart-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 16px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  background: var(--fo-surface);
+  border-top: 1px solid var(--fo-border);
+  z-index: 100;
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
+}
+
+.mobile-cart-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border: none;
+  border-radius: 14px;
+  background: var(--fo-primary);
+  color: #fff;
+  padding: 15px 20px;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+
+  &:hover  { background: color-mix(in srgb, var(--fo-primary) 80%, black); }
+  &:active { transform: scale(0.98); }
+}
+
+.mobile-cart-btn-label {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.mobile-cart-btn-total {
+  font-size: 16px;
+  font-weight: 700;
+  opacity: 0.9;
+}

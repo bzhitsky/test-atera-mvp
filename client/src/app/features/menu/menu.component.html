@@ -191,6 +191,16 @@
 
   </div><!-- /menu-left -->
 
+  <!-- ── Mobile sticky cart button ────────────────────────────────────── -->
+  @if (!isDesktop() && cartCount() > 0) {
+    <div class="mobile-cart-bar">
+      <button class="mobile-cart-btn" (click)="openCart()">
+        <span class="mobile-cart-btn-label">В корзину</span>
+        <span class="mobile-cart-btn-total">{{ cartTotal() | number:'1.0-0' }}&thinsp;₽</span>
+      </button>
+    </div>
+  }
+
   <!-- ── Cart sidebar (desktop only) ──────────────────────────────────── -->
   @if (isDesktop()) {
     <aside class="cart-sidebar" aria-label="Корзина">
