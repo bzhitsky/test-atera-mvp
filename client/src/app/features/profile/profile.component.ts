@@ -2,49 +2,49 @@ import {
   Component,
   inject,
   signal,
-  computed,
   OnInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
+import { Location } from '@angular/common';
+import { DialogRef } from '@angular/cdk/dialog';
 import { catchError, EMPTY } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
+
+const LOCAL_PROFILE_KEY = 'fo_local_profile';
+
+interface LocalProfile {
+  gender: string;
+  birthday: string;
+  agreeOffer: boolean;
+  agreePrivacy: boolean;
+}
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
 })
 export class ProfileComponent implements OnInit {
   private readonly router = inject(Router);
+  private readonly location = inject(Location);
+  private readonly dialogRef = inject(DialogRef, { optional: true });
   readonly authService = inject(AuthService);
 
   readonly user = this.authService.user;
 
-  editing = signal(false);
   saving = signal(false);
   saveError = signal<string | null>(null);
   saveSuccess = signal(false);
 
   editName = '';
   editEmail = '';
-
-  readonly initials = computed(() => {
-    const u = this.user();
-    if (!u) return '?';
-    const name = u.name?.trim();
-    if (name) {
-      return name
-        .split(' ')
-        .slice(0, 2)
-        .map((w) => w[0])
-        .join('')
-        .toUpperCase();
-    }
-    return u.phone.slice(-2);
-  });
+  editGender = '';
+  editBirthday = '';
+  agreeOffer = false;
+  agreePrivacy = false;
 
   ngOnInit(): void {
     const u = this.user();
@@ -52,22 +52,19 @@ export class ProfileComponent implements OnInit {
       this.editName = u.name ?? '';
       this.editEmail = u.email ?? '';
     }
+    const local = this.loadLocal();
+    this.editGender = local.gender;
+    this.editBirthday = local.birthday;
+    this.agreeOffer = local.agreeOffer;
+    this.agreePrivacy = local.agreePrivacy;
   }
 
-  startEdit(): void {
-    const u = this.user();
-    if (u) {
-      this.editName = u.name ?? '';
-      this.editEmail = u.email ?? '';
+  close(): void {
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    } else {
+      this.location.back();
     }
-    this.saveError.set(null);
-    this.saveSuccess.set(false);
-    this.editing.set(true);
-  }
-
-  cancelEdit(): void {
-    this.editing.set(false);
-    this.saveError.set(null);
   }
 
   save(): void {
@@ -75,6 +72,8 @@ export class ProfileComponent implements OnInit {
     this.saving.set(true);
     this.saveError.set(null);
     this.saveSuccess.set(false);
+
+    this.saveLocal();
 
     this.authService
       .updateProfile({
@@ -90,14 +89,47 @@ export class ProfileComponent implements OnInit {
       )
       .subscribe(() => {
         this.saving.set(false);
-        this.editing.set(false);
         this.saveSuccess.set(true);
         setTimeout(() => this.saveSuccess.set(false), 3000);
       });
   }
 
+  deleteProfile(): void {
+    if (!confirm('Удалить профиль? Это действие необратимо.')) return;
+    this.authService.logout();
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
+    this.router.navigate(['/auth']);
+  }
+
   logout(): void {
     this.authService.logout();
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
     this.router.navigate(['/auth']);
+  }
+
+  private loadLocal(): LocalProfile {
+    try {
+      return JSON.parse(localStorage.getItem(LOCAL_PROFILE_KEY) ?? 'null') ?? {
+        gender: '',
+        birthday: '',
+        agreeOffer: false,
+        agreePrivacy: false,
+      };
+    } catch {
+      return { gender: '', birthday: '', agreeOffer: false, agreePrivacy: false };
+    }
+  }
+
+  private saveLocal(): void {
+    localStorage.setItem(LOCAL_PROFILE_KEY, JSON.stringify({
+      gender: this.editGender,
+      birthday: this.editBirthday,
+      agreeOffer: this.agreeOffer,
+      agreePrivacy: this.agreePrivacy,
+    }));
   }
 }

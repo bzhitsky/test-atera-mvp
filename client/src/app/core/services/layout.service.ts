@@ -3,6 +3,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { Router } from '@angular/router';
 import { Dialog } from '@angular/cdk/dialog';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AuthService } from './auth.service';
 
 export type NavigationTarget =
   | 'product'
@@ -23,6 +24,12 @@ export class LayoutService {
   private readonly breakpointObserver = inject(BreakpointObserver);
   private readonly router = inject(Router);
   private readonly dialog = inject(Dialog);
+  private readonly authService = inject(AuthService);
+
+  private readonly PROTECTED: NavigationTarget[] = [
+    'cart', 'checkout', 'profile', 'orders',
+    'order-detail', 'order-rate', 'order-status', 'addresses',
+  ];
 
   readonly isDesktop = signal(false);
 
@@ -85,6 +92,15 @@ export class LayoutService {
     target: NavigationTarget,
     params?: Record<string, unknown>
   ) {
+    if (this.PROTECTED.includes(target) && !this.authService.isAuthenticated()) {
+      const { AuthComponent } = await import('../../features/auth/auth.component');
+      this.dialog.open(AuthComponent, {
+        panelClass: 'fo-dialog',
+        backdropClass: 'fo-backdrop',
+      });
+      return;
+    }
+
     let component: any;
 
     switch (target) {
