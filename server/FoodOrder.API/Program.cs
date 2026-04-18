@@ -1,4 +1,6 @@
 using System.Text;
+using FoodOrder.Application;
+using FoodOrder.Infrastructure;
 using FoodOrder.Infrastructure.Data;
 using FoodOrder.API.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
