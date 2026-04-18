@@ -50,16 +50,18 @@
 
 // ── Site header ───────────────────────────────────────────────────────────────
 .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
   background: var(--fo-surface);
-  border-bottom: 1px solid var(--fo-border);
 
   @media (min-width: 1024px) {
+    position: static;
     margin: 40px 20px 0;
     border-radius: var(--fo-radius);
     border-bottom: none;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
     flex-shrink: 0;
-    // header is now inside .menu-left — stays within the menu column only
   }
 }
 
@@ -143,22 +145,7 @@
 
 // Mobile cart button
 .cart-btn {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  flex-shrink: 0;
-  border: none;
-  border-radius: 50%;
-  background: var(--fo-primary-light);
-  color: var(--fo-primary);
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-
-  &:hover  { background: color-mix(in srgb, var(--fo-primary) 18%, white); }
-  &:active { transform: scale(0.91); }
+  display: none;
 
   @media (min-width: 1024px) {
     display: none;
@@ -202,9 +189,10 @@
 }
 
 // ── Controls (sticky below header) ───────────────────────────────────────────
+// Mobile: header-inner (64px) + address-bar (48px) = 112px
 .menu-controls {
   position: sticky;
-  top: 64px;
+  top: 112px;
   z-index: 19;
   background: var(--fo-surface);
   padding: 0px 16px 0;
@@ -218,6 +206,172 @@
     border-bottom: none;
     background: var(--fo-bg);
   }
+}
+
+// ── Mobile hamburger button ───────────────────────────────────────────────────
+.mobile-hamburger-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 10px;
+  background: none;
+  color: var(--fo-text);
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover { background: var(--fo-bg); }
+  &:active { background: var(--fo-border); }
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
+}
+
+// ── Mobile address bar ────────────────────────────────────────────────────────
+.mobile-address-bar {
+  height: 48px;
+  border-top: 1px solid var(--fo-border);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+}
+
+.mobile-address-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fo-text);
+  cursor: pointer;
+  padding: 6px 4px;
+  border-radius: 8px;
+  width: 100%;
+  transition: background 0.15s;
+
+  &:hover { background: var(--fo-bg); }
+}
+
+.mobile-address-icon {
+  color: var(--fo-primary);
+  flex-shrink: 0;
+}
+
+.mobile-address-text {
+  flex: 1;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobile-address-chevron {
+  color: var(--fo-text-secondary);
+  flex-shrink: 0;
+}
+
+// ── Mobile drawer ─────────────────────────────────────────────────────────────
+.mobile-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 200;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.mobile-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: min(80vw, 300px);
+  background: var(--fo-surface);
+  z-index: 201;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+  animation: slideInLeft 0.25s ease;
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
+.mobile-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid var(--fo-border);
+}
+
+.mobile-drawer-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--fo-text);
+}
+
+.mobile-drawer-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: var(--fo-bg);
+  border-radius: 50%;
+  color: var(--fo-text-secondary);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover { background: var(--fo-border); color: var(--fo-text); }
+}
+
+.mobile-drawer-list {
+  list-style: none;
+  margin: 0;
+  padding: 8px 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.mobile-drawer-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--fo-text);
+  padding: 14px 20px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+
+  svg { color: var(--fo-text-secondary); flex-shrink: 0; }
+
+  &:hover {
+    background: var(--fo-bg);
+    svg { color: var(--fo-primary); }
+  }
+
+  &:active { background: var(--fo-primary-light); }
 }
 
 // ── Search ───────────────────────────────────────────────────────────────────

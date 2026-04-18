@@ -34,6 +34,7 @@ export class MenuComponent implements OnInit {
   readonly skeletons = Array.from({ length: 10 }, (_, i) => i);
 
   readonly isDesktop = this.layoutService.isDesktop;
+  readonly mobileDrawerOpen = signal(false);
 
   // ── Cart state ───────────────────────────────────────────────────────────
   readonly cartItems = this.cartService.items;
@@ -111,6 +112,14 @@ export class MenuComponent implements OnInit {
   clearSearch(): void {
     this.searchQuery.set('');
     this.searchInput$.next('');
+  }
+
+  toggleMobileDrawer(): void {
+    this.mobileDrawerOpen.update((v) => !v);
+  }
+
+  closeMobileDrawer(): void {
+    this.mobileDrawerOpen.set(false);
   }
 
   openProduct(id: number): void {

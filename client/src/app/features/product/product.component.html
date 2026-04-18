@@ -185,7 +185,7 @@
     <!-- ── Recommendations (full-width below grid) ────────────────────────── -->
     @if (p.recommendations.length > 0) {
       <section class="recs-section">
-        <h2 class="section-title recs-title">Рекомендуем</h2>
+        <h2 class="section-title recs-title">Вам может понравиться</h2>
         <div class="recs-scroll">
           @for (rec of p.recommendations; track rec.id) {
             <article class="rec-card" (click)="openProduct(rec.id)" tabindex="0"
