@@ -1,15 +1,19 @@
 using System.Security.Claims;
 using FoodOrder.Application.DTOs;
 using FoodOrder.Application.Interfaces;
+using FoodOrder.API.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace FoodOrder.API.Controllers;
 
 [ApiController]
 [Route("api/orders")]
 [Authorize]
-public class OrdersController(IOrderService orderService) : ControllerBase
+public class OrdersController(
+    IOrderService orderService,
+    IHubContext<OrderStatusHub> hubContext) : ControllerBase
 {
     private int CurrentUserId => int.Parse(
         User.FindFirstValue(ClaimTypes.NameIdentifier)
@@ -66,6 +70,9 @@ public class OrdersController(IOrderService orderService) : ControllerBase
         try
         {
             var order = await orderService.UpdateStatusAsync(id, request.Status, request.Note, ct);
+            await hubContext.Clients
+                .Group($"order-{id}")
+                .SendAsync("OrderStatusUpdated", order, ct);
             return Ok(order);
         }
         catch (ArgumentException ex)
