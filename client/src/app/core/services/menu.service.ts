@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { Category, ProductListItem } from '../models';
+import { Category, ProductDetail, ProductListItem } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class MenuService {
@@ -16,5 +16,9 @@ export class MenuService {
     if (filter?.categoryId != null) params = params.set('categoryId', filter.categoryId);
     if (filter?.search) params = params.set('search', filter.search);
     return this.http.get<ProductListItem[]>(`${environment.apiUrl}/products`, { params });
+  }
+
+  getProductDetail(id: number) {
+    return this.http.get<ProductDetail>(`${environment.apiUrl}/products/${id}`);
   }
 }

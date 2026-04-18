@@ -1,0 +1,226 @@
+<div class="product-page">
+
+  <!-- ── Sticky back bar ────────────────────────────────────────────── -->
+  <div class="top-bar">
+    <button class="back-btn" (click)="goBack()" aria-label="Назад">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- ── Loading skeleton ───────────────────────────────────────────── -->
+  @if (loading()) {
+    <div class="skeleton-hero shimmer"></div>
+    <div class="skeleton-content">
+      <div class="sk-line sk-line--tags shimmer"></div>
+      <div class="sk-line sk-line--title shimmer"></div>
+      <div class="sk-line sk-line--title sk-line--short shimmer"></div>
+      <div class="sk-line sk-line--meta shimmer"></div>
+      <div class="sk-line sk-line--body shimmer"></div>
+      <div class="sk-line sk-line--body shimmer"></div>
+      <div class="sk-line sk-line--body sk-line--short shimmer"></div>
+    </div>
+
+  <!-- ── Error state ────────────────────────────────────────────────── -->
+  } @else if (error() || !product()) {
+    <div class="error-state">
+      <span class="error-icon" aria-hidden="true">😕</span>
+      <p class="error-title">Не удалось загрузить</p>
+      <p class="error-text">Попробуйте вернуться и открыть блюдо снова</p>
+      <button class="back-action-btn" (click)="goBack()">Вернуться</button>
+    </div>
+
+  <!-- ── Product content ────────────────────────────────────────────── -->
+  } @else {
+    @let p = product()!;
+
+    <!-- Hero image -->
+    <div class="hero">
+      @if (p.imageUrl) {
+        <img [src]="p.imageUrl" [alt]="p.name" class="hero-img" />
+      } @else {
+        <div class="hero-placeholder" aria-hidden="true">🍽️</div>
+      }
+    </div>
+
+    <!-- Main content card -->
+    <div class="content-card">
+
+      <!-- Tags -->
+      @if (p.tags.length > 0) {
+        <div class="tags-row" aria-label="Теги">
+          @for (tag of p.tags; track tag) {
+            <span class="tag">{{ tag }}</span>
+          }
+        </div>
+      }
+
+      <!-- Name -->
+      <h1 class="product-name">{{ p.name }}</h1>
+
+      <!-- Meta: weight / calories -->
+      @if (p.weightGrams || p.calories) {
+        <p class="meta-row">
+          @if (p.weightGrams) { <span>{{ p.weightGrams }}&thinsp;г</span> }
+          @if (p.weightGrams && p.calories) { <span class="dot">·</span> }
+          @if (p.calories) { <span>{{ p.calories }}&thinsp;ккал</span> }
+        </p>
+      }
+
+      <!-- Description -->
+      @if (p.description) {
+        <p class="description">{{ p.description }}</p>
+      }
+
+      <!-- ── Sizes ──────────────────────────────────────────────────── -->
+      @if (p.sizes.length > 0) {
+        <section class="section">
+          <h2 class="section-title">Размер</h2>
+          <div class="size-picker" role="radiogroup" aria-label="Выберите размер">
+            @for (size of p.sizes; track size.id) {
+              <button
+                class="size-btn"
+                [class.active]="selectedSizeId() === size.id"
+                (click)="selectSize(size.id)"
+                role="radio"
+                [attr.aria-checked]="selectedSizeId() === size.id"
+                [attr.aria-label]="size.label + (size.priceDelta > 0 ? ' плюс ' + size.priceDelta + ' рублей' : '')"
+              >
+                <span class="size-label">{{ size.label }}</span>
+                @if (size.priceDelta !== 0) {
+                  <span class="size-delta">
+                    {{ size.priceDelta > 0 ? '+' : '' }}{{ size.priceDelta | number:'1.0-0' }}&thinsp;₽
+                  </span>
+                }
+                @if (size.weightGrams) {
+                  <span class="size-weight">{{ size.weightGrams }}&thinsp;г</span>
+                }
+              </button>
+            }
+          </div>
+        </section>
+      }
+
+      <!-- ── Ingredients ────────────────────────────────────────────── -->
+      @if (p.ingredients.length > 0) {
+        <section class="section">
+          <div class="section-header">
+            <h2 class="section-title">Состав</h2>
+            @if (removedIngredientIds().size > 0) {
+              <span class="section-hint">нажмите, чтобы вернуть</span>
+            } @else {
+              <span class="section-hint">нажмите, чтобы убрать</span>
+            }
+          </div>
+          <div class="ingredients-grid">
+            @for (ing of p.ingredients; track ing.id) {
+              <button
+                class="ingredient-chip"
+                [class.removed]="removedIngredientIds().has(ing.id)"
+                (click)="toggleIngredient(ing.id)"
+                [attr.aria-pressed]="removedIngredientIds().has(ing.id)"
+                [attr.aria-label]="(removedIngredientIds().has(ing.id) ? 'Убран: ' : '') + ing.name"
+              >
+                @if (removedIngredientIds().has(ing.id)) {
+                  <svg class="chip-icon" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                }
+                {{ ing.name }}
+              </button>
+            }
+          </div>
+        </section>
+      }
+
+      <!-- ── Addons ─────────────────────────────────────────────────── -->
+      @if (p.addons.length > 0) {
+        <section class="section">
+          <h2 class="section-title">Добавки</h2>
+          <div class="addons-list">
+            @for (addon of p.addons; track addon.id) {
+              <button
+                class="addon-item"
+                [class.selected]="selectedAddonIds().has(addon.id)"
+                (click)="toggleAddon(addon.id)"
+                [attr.aria-pressed]="selectedAddonIds().has(addon.id)"
+                [attr.aria-label]="addon.name + ', плюс ' + addon.price + ' рублей'"
+              >
+                @if (addon.imageUrl) {
+                  <img [src]="addon.imageUrl" [alt]="addon.name" class="addon-img" />
+                } @else {
+                  <div class="addon-img-placeholder" aria-hidden="true">🥫</div>
+                }
+                <span class="addon-name">{{ addon.name }}</span>
+                <span class="addon-price">+{{ addon.price | number:'1.0-0' }}&thinsp;₽</span>
+                <span class="addon-check" aria-hidden="true">
+                  @if (selectedAddonIds().has(addon.id)) {
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  }
+                </span>
+              </button>
+            }
+          </div>
+        </section>
+      }
+
+      <!-- ── Recommendations ───────────────────────────────────────── -->
+      @if (p.recommendations.length > 0) {
+        <section class="section section--recs">
+          <h2 class="section-title">Рекомендуем</h2>
+          <div class="recs-scroll">
+            @for (rec of p.recommendations; track rec.id) {
+              <article class="rec-card" (click)="openProduct(rec.id)" tabindex="0"
+                       (keydown.enter)="openProduct(rec.id)" [attr.aria-label]="rec.name">
+                <div class="rec-img-wrap">
+                  @if (rec.imageUrl) {
+                    <img [src]="rec.imageUrl" [alt]="rec.name" class="rec-img" loading="lazy" />
+                  } @else {
+                    <div class="rec-img-placeholder" aria-hidden="true">🍽️</div>
+                  }
+                </div>
+                <div class="rec-body">
+                  <p class="rec-name">{{ rec.name }}</p>
+                  <p class="rec-price">от {{ rec.price | number:'1.0-0' }}&thinsp;₽</p>
+                </div>
+              </article>
+            }
+          </div>
+        </section>
+      }
+
+    </div><!-- /content-card -->
+
+    <!-- ── Sticky footer ──────────────────────────────────────────── -->
+    <div class="sticky-footer" [class.added]="addedToCart()">
+      <div class="footer-price">
+        <span class="footer-price-label">Итого</span>
+        <span class="footer-price-value">{{ totalPrice() | number:'1.0-0' }}&thinsp;₽</span>
+      </div>
+      <button
+        class="add-btn"
+        (click)="addToCart()"
+        [disabled]="addedToCart()"
+        [attr.aria-label]="'Добавить в корзину за ' + totalPrice() + ' рублей'"
+      >
+        @if (addedToCart()) {
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Добавлено!
+        } @else {
+          В корзину
+        }
+      </button>
+    </div>
+
+  }<!-- /product content -->
+
+</div>

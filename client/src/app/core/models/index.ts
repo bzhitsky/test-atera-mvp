@@ -22,12 +22,35 @@ export interface ProductSize {
   id: number;
   label: string; // 'S' | 'M' | 'L'
   priceDelta: number;
+  weightGrams?: number;
 }
 
 export interface ProductAddon {
   id: number;
   name: string;
   price: number;
+  imageUrl?: string;
+}
+
+export interface ProductIngredient {
+  id: number;
+  name: string;
+}
+
+export interface ProductDetail {
+  id: number;
+  categoryId: number;
+  name: string;
+  description?: string;
+  imageUrl?: string;
+  price: number;
+  weightGrams?: number;
+  calories?: number;
+  tags: string[];
+  sizes: ProductSize[];
+  addons: ProductAddon[];
+  ingredients: ProductIngredient[];
+  recommendations: ProductListItem[];
 }
 
 export interface Product {
