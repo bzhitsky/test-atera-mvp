@@ -1,3 +1,4 @@
+using FoodOrder.Infrastructure.Auth;
 using FoodOrder.Infrastructure.Data;
 using FoodOrder.Infrastructure.Repositories;
 using FoodOrder.Application.Interfaces;
@@ -21,6 +22,8 @@ public static class ServiceExtensions
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IAddressRepository, AddressRepository>();
+        services.AddScoped<IOtpRepository, OtpRepository>();
+        services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
 
         return services;
     }
