@@ -10,9 +10,7 @@
     </button>
     <h1 class="cart-title">Корзина</h1>
     @if (items().length > 0) {
-      <button class="clear-btn" (click)="clearAll()" aria-label="Очистить корзину">
-        Очистить
-      </button>
+      <button class="clear-btn" (click)="clearAll()" aria-label="Очистить корзину">Очистить</button>
     } @else {
       <span class="header-spacer"></span>
     }
@@ -35,39 +33,72 @@
     </div>
   }
 
-  <!-- ── Cart items ────────────────────────────────────────────────────────── -->
+  <!-- ── Cart content ──────────────────────────────────────────────────────── -->
   @if (items().length > 0) {
     <main class="cart-content">
 
-      <ul class="items-list" role="list">
-        @for (item of items(); track item.productId + '-' + (item.sizeId ?? 0)) {
-          <li class="cart-item">
+      <!-- Delivery type toggle -->
+      <div class="delivery-toggle">
+        <button
+          class="delivery-tab"
+          [class.active]="deliveryType() === 'Pickup'"
+          (click)="setDeliveryType('Pickup')"
+        >
+          <span class="delivery-tab-name">Самовывоз</span>
+          <span class="delivery-tab-meta">0&thinsp;₽ · 30–40 мин</span>
+        </button>
+        <button
+          class="delivery-tab"
+          [class.active]="deliveryType() === 'Delivery'"
+          (click)="setDeliveryType('Delivery')"
+        >
+          <span class="delivery-tab-name">Доставка</span>
+          <span class="delivery-tab-meta">350&thinsp;₽ · 50–70 мин</span>
+        </button>
+      </div>
 
-            <!-- Image -->
-            <div class="item-img-wrap">
-              @if (item.product?.imageUrl) {
-                <img
-                  [src]="item.product.imageUrl"
-                  [alt]="item.product.name"
-                  class="item-img"
-                  loading="lazy"
-                />
-              } @else {
-                <div class="item-img-placeholder" aria-hidden="true">🍽️</div>
-              }
-            </div>
+      <!-- Address row -->
+      <div class="address-section">
+        <h2 class="section-label">Адрес доставки</h2>
+        <div class="address-row">
+          <svg class="address-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          <span class="address-text">
+            @if (isDelivery() && selectedAddress()) {
+              {{ selectedAddress()!.street }}
+            } @else {
+              ул. Пушкина, 100
+            }
+          </span>
+          <button class="address-change-btn" (click)="goBack()">Изменить</button>
+        </div>
+      </div>
 
-            <!-- Info -->
-            <div class="item-info">
-              <p class="item-name">{{ item.product?.name }}</p>
-              @if (itemLabel(item)) {
-                <p class="item-variant">{{ itemLabel(item) }}</p>
-              }
-              <p class="item-unit-price">{{ item.unitPrice | number:'1.0-0' }}&thinsp;₽</p>
-            </div>
+      <!-- Items -->
+      <div class="items-section">
+        <h2 class="section-label">Товары</h2>
+        <ul class="items-list" role="list">
+          @for (item of items(); track item.productId + '-' + (item.sizeId ?? 0)) {
+            <li class="cart-item">
+              <div class="item-img-wrap">
+                @if (item.product?.imageUrl) {
+                  <img [src]="item.product.imageUrl" [alt]="item.product.name" class="item-img" loading="lazy" />
+                } @else {
+                  <div class="item-img-placeholder" aria-hidden="true">🍽️</div>
+                }
+              </div>
 
-            <!-- Controls -->
-            <div class="item-controls">
+              <div class="item-info">
+                <p class="item-name">{{ item.product?.name }}</p>
+                @if (itemLabel(item)) {
+                  <p class="item-variant">{{ itemLabel(item) }}</p>
+                }
+                <p class="item-unit-price">{{ item.unitPrice | number:'1.0-0' }}&thinsp;₽</p>
+              </div>
+
               <div class="qty-stepper" role="group" [attr.aria-label]="'Количество: ' + item.product?.name">
                 <button
                   class="qty-btn qty-btn--minus"
@@ -75,56 +106,65 @@
                   [attr.aria-label]="item.quantity === 1 ? 'Удалить' : 'Уменьшить'"
                 >
                   @if (item.quantity === 1) {
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                          stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
                       <polyline points="3 6 5 6 21 6"/>
                       <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                      <path d="M10 11v6M14 11v6"/>
-                      <path d="M9 6V4h6v2"/>
+                      <path d="M10 11v6M14 11v6M9 6V4h6v2"/>
                     </svg>
                   } @else {
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                          stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
                       <line x1="5" y1="12" x2="19" y2="12"/>
                     </svg>
                   }
                 </button>
-
                 <span class="qty-value" aria-live="polite">{{ item.quantity }}</span>
-
-                <button
-                  class="qty-btn qty-btn--plus"
-                  (click)="increment(item)"
-                  aria-label="Увеличить"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                <button class="qty-btn qty-btn--plus" (click)="increment(item)" aria-label="Увеличить">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                        stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
                     <line x1="12" y1="5" x2="12" y2="19"/>
                     <line x1="5" y1="12" x2="19" y2="12"/>
                   </svg>
                 </button>
               </div>
+            </li>
+          }
+        </ul>
+      </div>
 
-              <p class="item-total">{{ item.unitPrice * item.quantity | number:'1.0-0' }}&thinsp;₽</p>
-            </div>
-
-          </li>
-        }
-      </ul>
-
-    </main>
-
-    <!-- ── Footer / Summary ────────────────────────────────────────────────── -->
-    <footer class="cart-footer">
-      <div class="summary">
-        <div class="summary-row">
-          <span class="summary-label">{{ itemsCount() }}</span>
-          <span class="summary-value">{{ total() | number:'1.0-0' }}&thinsp;₽</span>
+      <!-- Cutlery -->
+      <div class="cutlery-row">
+        <span class="cutlery-label">Столовые приборы</span>
+        <div class="qty-stepper" role="group" aria-label="Столовые приборы">
+          <button
+            class="qty-btn"
+            (click)="decrementCutlery()"
+            [disabled]="cutleryCount() === 0"
+            aria-label="Убрать прибор"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+          </button>
+          <span class="qty-value">{{ cutleryCount() }}</span>
+          <button class="qty-btn" (click)="incrementCutlery()" aria-label="Добавить прибор">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+          </button>
         </div>
       </div>
 
+    </main>
+
+    <!-- ── Footer ────────────────────────────────────────────────────────────── -->
+    <footer class="cart-footer">
       <button class="checkout-btn" (click)="checkout()">
-        Оформить заказ
+        Далее
         <span class="checkout-total">{{ total() | number:'1.0-0' }}&thinsp;₽</span>
       </button>
     </footer>

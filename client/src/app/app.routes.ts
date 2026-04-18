@@ -30,7 +30,6 @@ export const routes: Routes = [
       import('./features/checkout/checkout.component').then(
         (m) => m.CheckoutComponent
       ),
-    canActivate: [authGuard],
   },
   {
     path: 'order-status/:id',
