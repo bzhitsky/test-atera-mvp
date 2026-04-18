@@ -1,0 +1,52 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: foodorder_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: foodorder
+      POSTGRES_USER: foodorder
+      POSTGRES_PASSWORD: foodorder_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U foodorder -d foodorder"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./server
+      dockerfile: FoodOrder.API/Dockerfile
+    container_name: foodorder_api
+    restart: unless-stopped
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=foodorder;Username=foodorder;Password=foodorder_pass
+      - Jwt__Key=your-super-secret-key-at-least-32-characters-long!
+      - Jwt__Issuer=FoodOrderAPI
+      - Jwt__Audience=FoodOrderClient
+      - AllowedOrigins__0=http://localhost:4200
+      - AllowedOrigins__1=http://localhost
+    depends_on:
+      db:
+        condition: service_healthy
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: foodorder_client
+    restart: unless-stopped
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+
+volumes:
+  pg_data:

@@ -1,0 +1,23 @@
+# Angular
+client/node_modules/
+client/dist/
+client/.angular/
+
+# .NET
+server/**/bin/
+server/**/obj/
+server/**/.vs/
+*.user
+
+# Docker
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.ncrunch*
