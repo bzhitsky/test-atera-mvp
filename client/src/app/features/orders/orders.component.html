@@ -1,0 +1,91 @@
+<div class="orders-page">
+
+  <!-- ── Header ──────────────────────────────────────────────────────────── -->
+  <header class="page-header">
+    <button class="back-btn" (click)="goBack()" aria-label="Назад">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+    <h1 class="page-title">Мои заказы</h1>
+    <span class="header-spacer"></span>
+  </header>
+
+  <!-- ── Loading ─────────────────────────────────────────────────────────── -->
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Загружаем заказы…</p>
+    </div>
+  }
+
+  <!-- ── Error ───────────────────────────────────────────────────────────── -->
+  @if (error()) {
+    <div class="error-state">
+      <span class="error-icon">😕</span>
+      <p>{{ error() }}</p>
+      <button class="btn-primary" (click)="ngOnInit()">Повторить</button>
+    </div>
+  }
+
+  <!-- ── Empty ───────────────────────────────────────────────────────────── -->
+  @if (!loading() && !error() && orders().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon" aria-hidden="true">
+        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 11l3 3L22 4"/>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+        </svg>
+      </div>
+      <p class="empty-title">Заказов пока нет</p>
+      <p class="empty-text">Сделайте первый заказ в нашем меню!</p>
+      <button class="btn-primary" (click)="goBack()">Перейти в меню</button>
+    </div>
+  }
+
+  <!-- ── Orders list ─────────────────────────────────────────────────────── -->
+  @if (!loading() && !error() && orders().length > 0) {
+    <main class="orders-content">
+      <ul class="orders-list" role="list">
+        @for (order of orders(); track order.id) {
+          <li class="order-card" (click)="openOrder(order.id)" role="button" tabindex="0"
+              (keydown.enter)="openOrder(order.id)" (keydown.space)="openOrder(order.id)">
+
+            <div class="order-top">
+              <div class="order-meta">
+                <span class="order-id">#{{ order.id }}</span>
+                <span class="order-date">{{ order.createdAt | date:'d MMM, HH:mm' }}</span>
+              </div>
+              <span class="status-badge" [class]="statusClass(order.status)">
+                {{ statusIcons[order.status] }} {{ statusLabels[order.status] ?? order.status }}
+              </span>
+            </div>
+
+            <div class="order-bottom">
+              <div class="order-items-preview">
+                @if (order.firstItemName) {
+                  <span class="order-preview-text">
+                    {{ order.firstItemName }}
+                    @if (order.itemCount > 1) {
+                      <span class="order-more"> и ещё {{ order.itemCount - 1 }} позиц.</span>
+                    }
+                  </span>
+                }
+              </div>
+              <span class="order-total">{{ order.total | number:'1.0-0' }}&thinsp;₽</span>
+            </div>
+
+            <svg class="order-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+
+          </li>
+        }
+      </ul>
+    </main>
+  }
+
+</div>

@@ -1,0 +1,176 @@
+@if (loading()) {
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>Загружаем заказ…</p>
+  </div>
+} @else if (error()) {
+  <div class="error-state">
+    <span class="error-icon">😕</span>
+    <p>{{ error() }}</p>
+    <button class="btn-primary" (click)="goBack()">К заказам</button>
+  </div>
+} @else if (order()) {
+  @let o = order()!;
+  <div class="page">
+
+    <!-- ── Header ────────────────────────────────────────────────────────── -->
+    <header class="page-header">
+      <button class="back-btn" (click)="goBack()" aria-label="К заказам">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <div class="header-meta">
+        <h1>Заказ #{{ o.id }}</h1>
+        <span class="order-date">{{ o.createdAt | date:'d MMM yyyy, HH:mm' }}</span>
+      </div>
+      <span class="header-spacer"></span>
+    </header>
+
+    <div class="card">
+
+      <!-- Status banner -->
+      <div class="status-banner" [attr.data-status]="o.status.toLowerCase()">
+        <span class="status-big-icon">{{ statusIcons[o.status] }}</span>
+        <div class="status-text">
+          <span class="status-name">{{ statusLabels[o.status] }}</span>
+          @if (o.status === 'Delivered') {
+            <span class="status-sub">Спасибо, что выбрали нас!</span>
+          } @else if (o.status === 'Delayed') {
+            <span class="status-sub">Заказ немного задерживается</span>
+          }
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      @if (!isCancelled()) {
+        <div class="timeline">
+          @for (step of statusSteps; track step; let last = $last) {
+            <div class="timeline-item" [attr.data-state]="stepState(step)">
+              <div class="tl-dot">
+                @if (stepState(step) === 'done') {
+                  <span class="check">✓</span>
+                } @else if (stepState(step) === 'active') {
+                  <span class="pulse-ring"></span>
+                }
+              </div>
+              @if (!last) { <div class="tl-line"></div> }
+              <div class="tl-label">
+                <span class="tl-icon">{{ statusIcons[step] }}</span>
+                <span class="tl-text">{{ statusLabels[step] }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="cancelled-block">
+          <span>❌</span>
+          <p>Заказ отменён</p>
+        </div>
+      }
+
+      <!-- Items -->
+      <section class="section">
+        <h2 class="section-title">Состав заказа</h2>
+        <ul class="items-list">
+          @for (item of o.items; track item.id) {
+            <li class="item-row">
+              @if (item.imageUrl) {
+                <img [src]="item.imageUrl" [alt]="item.productName" class="item-img" loading="lazy" />
+              } @else {
+                <div class="item-img item-img-placeholder">🍽️</div>
+              }
+              <div class="item-info">
+                <span class="item-name">{{ item.productName }}</span>
+                @if (item.sizeLabel) {
+                  <span class="item-meta">Размер: {{ item.sizeLabel }}</span>
+                }
+                @if (item.addons.length > 0) {
+                  <span class="item-meta">+ {{ addonsText(item) }}</span>
+                }
+              </div>
+              <div class="item-price-block">
+                <span class="item-qty">× {{ item.quantity }}</span>
+                <span class="item-price">{{ item.unitPrice * item.quantity | number:'1.0-0' }}&thinsp;₽</span>
+              </div>
+            </li>
+          }
+        </ul>
+      </section>
+
+      <!-- Summary -->
+      <div class="summary-section">
+        <div class="summary-row">
+          <span class="summary-key">Тип заказа</span>
+          <span class="summary-val">{{ typeLabels[o.type] ?? o.type }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-key">Оплата</span>
+          <span class="summary-val">{{ paymentLabels[o.paymentMethod] ?? o.paymentMethod }}</span>
+        </div>
+        @if (o.address) {
+          <div class="summary-row">
+            <span class="summary-key">Адрес</span>
+            <span class="summary-val">{{ addressText(o) }}</span>
+          </div>
+        }
+        @if (o.comment) {
+          <div class="summary-row">
+            <span class="summary-key">Комментарий</span>
+            <span class="summary-val">{{ o.comment }}</span>
+          </div>
+        }
+        <div class="summary-row summary-total">
+          <span>Итого</span>
+          <span>{{ o.total | number:'1.0-0' }}&thinsp;₽</span>
+        </div>
+      </div>
+
+      <!-- Status history -->
+      @if (o.statusHistory && o.statusHistory.length > 1) {
+        <section class="section">
+          <h2 class="section-title">История статусов</h2>
+          <ul class="history-list">
+            @for (h of o.statusHistory; track h.occurredAt) {
+              <li class="history-item">
+                <span class="history-icon">{{ statusIcons[h.status] ?? '•' }}</span>
+                <div class="history-info">
+                  <span class="history-status">{{ statusLabels[h.status] ?? h.status }}</span>
+                  @if (h.note) { <span class="history-note">{{ h.note }}</span> }
+                </div>
+                <span class="history-time">{{ h.occurredAt | date:'d MMM, HH:mm' }}</span>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+
+      <!-- Existing review -->
+      @if (o.review) {
+        <section class="section">
+          <h2 class="section-title">Ваш отзыв</h2>
+          <div class="review-block">
+            <div class="review-stars">
+              @for (star of [1,2,3,4,5]; track star) {
+                <span class="star" [class.star--filled]="star <= o.review!.rating">★</span>
+              }
+            </div>
+            @if (o.review.comment) {
+              <p class="review-comment">{{ o.review.comment }}</p>
+            }
+            <p class="review-date">{{ o.review.createdAt | date:'d MMM yyyy' }}</p>
+          </div>
+        </section>
+      }
+
+      <!-- CTA: leave review -->
+      @if (isDelivered() && !o.review) {
+        <a class="btn-rate" [routerLink]="['/orders', o.id, 'rate']">
+          ⭐ Оставить отзыв
+        </a>
+      }
+
+    </div>
+  </div>
+}

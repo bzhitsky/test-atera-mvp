@@ -1,0 +1,421 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: var(--fo-bg);
+}
+
+// ── Header ─────────────────────────────────────────────────────────────────
+.page-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 12px;
+  background: var(--fo-surface);
+  border-bottom: 1px solid var(--fo-border);
+  gap: 8px;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--fo-bg);
+  color: var(--fo-text);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+
+  &:hover  { background: var(--fo-border); }
+  &:active { transform: scale(0.91); }
+}
+
+.page-title {
+  flex: 1;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--fo-text);
+  letter-spacing: -0.3px;
+  text-align: center;
+}
+
+.header-spacer { width: 40px; }
+
+// ── Loading / Error ─────────────────────────────────────────────────────────
+.loading-state,
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px 24px 40px;
+  text-align: center;
+  gap: 12px;
+  color: var(--fo-text-secondary);
+  font-size: 15px;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--fo-border);
+  border-top-color: var(--fo-primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.error-icon { font-size: 48px; }
+
+// ── Content ─────────────────────────────────────────────────────────────────
+.content {
+  padding: 16px;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// ── Empty state ──────────────────────────────────────────────────────────────
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 0 24px;
+  text-align: center;
+  gap: 10px;
+}
+
+.empty-icon { color: var(--fo-border); }
+
+.empty-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--fo-text);
+}
+
+.empty-text {
+  margin: 0;
+  font-size: 14px;
+  color: var(--fo-text-secondary);
+  max-width: 260px;
+  line-height: 1.5;
+}
+
+// ── Address list ─────────────────────────────────────────────────────────────
+.address-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.address-card {
+  background: var(--fo-surface);
+  border-radius: var(--fo-radius);
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// ── Address display ──────────────────────────────────────────────────────────
+.addr-content {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.addr-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--fo-primary-light);
+  color: var(--fo-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.addr-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.addr-label {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--fo-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.addr-street {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--fo-text);
+}
+
+.addr-details {
+  margin: 0;
+  font-size: 13px;
+  color: var(--fo-text-secondary);
+}
+
+.addr-comment {
+  margin: 0;
+  font-size: 12px;
+  color: var(--fo-text-secondary);
+  font-style: italic;
+}
+
+// ── Address actions ──────────────────────────────────────────────────────────
+.addr-actions {
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid var(--fo-border);
+  padding-top: 10px;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: none;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 20px;
+  transition: background 0.2s, color 0.2s;
+
+  &--edit {
+    color: var(--fo-text-secondary);
+    &:hover { background: var(--fo-bg); color: var(--fo-primary); }
+  }
+
+  &--delete {
+    color: var(--fo-text-secondary);
+    margin-left: auto;
+    &:hover { background: #fce4e4; color: var(--fo-error); }
+  }
+}
+
+// ── Form shared ──────────────────────────────────────────────────────────────
+.form-section-title {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--fo-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-group--sm { flex: 1; min-width: 0; }
+
+.form-row {
+  display: flex;
+  gap: 8px;
+}
+
+.form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fo-text-secondary);
+}
+
+.optional {
+  font-weight: 400;
+  color: var(--fo-text-secondary);
+}
+
+.form-input {
+  border: 1.5px solid var(--fo-border);
+  border-radius: var(--fo-radius-sm);
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--fo-text);
+  background: var(--fo-bg);
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s;
+
+  &:focus { border-color: var(--fo-primary); }
+}
+
+.error-text {
+  margin: 0;
+  font-size: 13px;
+  color: var(--fo-error);
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-cancel {
+  flex: 1;
+  padding: 11px 16px;
+  border: 1.5px solid var(--fo-border);
+  border-radius: var(--fo-radius-sm);
+  background: none;
+  color: var(--fo-text);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover { background: var(--fo-bg); }
+}
+
+.btn-save {
+  flex: 2;
+  padding: 11px 16px;
+  border: none;
+  border-radius: var(--fo-radius-sm);
+  background: var(--fo-primary);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+
+  &:hover  { background: #e05a00; }
+  &:active { transform: scale(0.98); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+}
+
+// ── Edit form (inside card) ───────────────────────────────────────────────────
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+// ── Add form card ─────────────────────────────────────────────────────────────
+.add-form-card {
+  background: var(--fo-surface);
+  border-radius: var(--fo-radius);
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border: 2px dashed var(--fo-border);
+}
+
+// ── Add button ────────────────────────────────────────────────────────────────
+.add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px dashed var(--fo-primary);
+  border-radius: var(--fo-radius);
+  background: var(--fo-primary-light);
+  color: var(--fo-primary);
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+
+  &:hover  { background: #ffe0cc; }
+  &:active { transform: scale(0.98); }
+}
+
+// ── Delete dialog ─────────────────────────────────────────────────────────────
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(2px);
+  z-index: 40;
+}
+
+.dialog {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  background: var(--fo-surface);
+  border-radius: var(--fo-radius) var(--fo-radius) 0 0;
+  padding: 24px 20px max(24px, env(safe-area-inset-bottom));
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: var(--fo-shadow);
+}
+
+.dialog-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--fo-text);
+}
+
+.dialog-text {
+  margin: 0;
+  font-size: 14px;
+  color: var(--fo-text-secondary);
+  line-height: 1.5;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.btn-delete {
+  flex: 2;
+  padding: 13px 16px;
+  border: none;
+  border-radius: var(--fo-radius-sm);
+  background: var(--fo-error);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover    { background: #b71c1c; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}

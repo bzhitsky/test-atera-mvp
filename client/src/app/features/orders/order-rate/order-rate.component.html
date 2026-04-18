@@ -1,0 +1,84 @@
+<div class="rate-page">
+
+  <!-- ── Header ──────────────────────────────────────────────────────────── -->
+  <header class="page-header">
+    <button class="back-btn" (click)="goBack()" aria-label="Назад">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+    <h1 class="page-title">Оставить отзыв</h1>
+    <span class="header-spacer"></span>
+  </header>
+
+  @if (success()) {
+    <!-- ── Success ────────────────────────────────────────────────────── -->
+    <div class="success-state">
+      <div class="success-icon" aria-hidden="true">🎉</div>
+      <p class="success-title">Спасибо за отзыв!</p>
+      <p class="success-text">Ваше мнение помогает нам становиться лучше</p>
+    </div>
+  } @else {
+    <div class="rate-content">
+
+      <!-- Order label -->
+      <p class="order-label">Заказ #{{ orderId }}</p>
+
+      <!-- Stars -->
+      <div class="stars-section">
+        <div class="stars-row"
+             role="radiogroup"
+             aria-label="Оценка от 1 до 5"
+             (mouseleave)="clearHover()">
+          @for (star of stars; track star) {
+            <button
+              class="star-btn"
+              [class.star-btn--filled]="starFilled(star)"
+              (click)="setRating(star)"
+              (mouseenter)="setHover(star)"
+              [attr.aria-label]="'Оценка ' + star"
+              type="button"
+            >★</button>
+          }
+        </div>
+        @if (hovered() > 0) {
+          <p class="rating-label">{{ ratingLabels[hovered()] }}</p>
+        } @else if (rating() > 0) {
+          <p class="rating-label">{{ ratingLabels[rating()] }}</p>
+        } @else {
+          <p class="rating-placeholder">Нажмите, чтобы оценить</p>
+        }
+      </div>
+
+      <!-- Comment -->
+      <div class="form-group">
+        <label class="form-label" for="comment">Комментарий <span class="optional">(необязательно)</span></label>
+        <textarea
+          id="comment"
+          class="form-textarea"
+          rows="4"
+          placeholder="Что понравилось или нет? Расскажите подробнее…"
+          [(ngModel)]="comment"
+          maxlength="1000"
+        ></textarea>
+        <p class="char-count">{{ comment.length }}/1000</p>
+      </div>
+
+      @if (error()) {
+        <p class="error-text" role="alert">{{ error() }}</p>
+      }
+
+      <button
+        class="submit-btn"
+        [disabled]="rating() === 0 || submitting()"
+        (click)="submit()"
+        type="button"
+      >
+        {{ submitting() ? 'Отправляем…' : 'Отправить отзыв' }}
+      </button>
+
+    </div>
+  }
+
+</div>
