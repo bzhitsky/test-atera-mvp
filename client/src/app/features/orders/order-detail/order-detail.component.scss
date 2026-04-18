@@ -42,7 +42,7 @@
   cursor: pointer;
   transition: background 0.2s;
 
-  &:hover { background: #e05a00; }
+  &:hover { background: color-mix(in srgb, var(--fo-primary) 80%, black); }
 }
 
 // ── Header ─────────────────────────────────────────────────────────────────
@@ -427,6 +427,6 @@
   font-weight: 700;
   transition: background 0.2s, transform 0.1s;
 
-  &:hover  { background: #e05a00; }
+  &:hover  { background: color-mix(in srgb, var(--fo-primary) 80%, black); }
   &:active { transform: scale(0.98); }
 }

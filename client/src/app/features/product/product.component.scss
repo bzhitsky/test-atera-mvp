@@ -562,7 +562,7 @@
   transition: background 0.2s, transform 0.1s;
   white-space: nowrap;
 
-  &:hover:not(:disabled) { background: #e05a00; }
+  &:hover:not(:disabled) { background: color-mix(in srgb, var(--fo-primary) 80%, black); }
   &:active:not(:disabled) { transform: scale(0.98); }
 
   &:disabled {

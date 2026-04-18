@@ -1,160 +1,414 @@
 <div class="menu-page">
 
-  <!-- ── Header ──────────────────────────────────────────────────────── -->
-  <header class="menu-header">
-    <span class="menu-title">Меню</span>
-    <button class="cart-btn" (click)="openCart()" aria-label="Открыть корзину">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-        <line x1="3" y1="6" x2="21" y2="6"/>
-        <path d="M16 10a4 4 0 0 1-8 0"/>
-      </svg>
-      @if (cartCount() > 0) {
-        <span class="cart-badge">{{ cartCount() }}</span>
-      }
-    </button>
+  <!-- ── Site header ──────────────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="site-header-inner">
+
+      <div class="site-brand">
+        <span class="site-name">Каракое-бар Мёд</span>
+        <span class="site-tagline">Кусочек Калифорнии в Долгопрудном! Кафе для бизнеса, кафе для семьи!</span>
+      </div>
+
+      <!-- Desktop navigation -->
+      <nav class="site-nav" aria-label="Навигация">
+        <button class="nav-link" aria-label="Анкета">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+          Анкета
+        </button>
+        <button class="nav-link" (click)="openOrders()" aria-label="История заказов">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          История заказов
+        </button>
+        <button class="nav-link" (click)="openProfile()" aria-label="Профиль">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          Профиль
+        </button>
+      </nav>
+
+      <!-- Mobile cart button -->
+      <button class="cart-btn" (click)="openCart()" aria-label="Открыть корзину">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+        @if (cartCount() > 0) {
+          <span class="cart-badge">{{ cartCount() }}</span>
+        }
+      </button>
+
+    </div>
   </header>
 
-  <!-- ── Sticky controls ─────────────────────────────────────────────── -->
-  <div class="menu-controls">
+  <!-- ── Page body ─────────────────────────────────────────────────────────── -->
+  <div class="page-body">
 
-    <!-- Search -->
-    <label class="search-wrap">
-      <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <circle cx="11" cy="11" r="8"/>
-        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-      </svg>
-      <input
-        class="search-input"
-        type="search"
-        placeholder="Поиск блюд..."
-        [value]="searchQuery()"
-        (input)="onSearch($event)"
-        autocomplete="off"
-        aria-label="Поиск блюд"
-      />
-      @if (searchQuery()) {
-        <button class="search-clear" (click)="clearSearch()" aria-label="Очистить поиск">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
-            <line x1="18" y1="6" x2="6" y2="18"/>
-            <line x1="6" y1="6" x2="18" y2="18"/>
+    <!-- ── Menu area ────────────────────────────────────────────────────── -->
+    <div class="menu-area">
+
+      <!-- Controls: search + categories -->
+      <div class="menu-controls">
+
+        <!-- Search -->
+        <label class="search-wrap">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
-        </button>
-      }
-    </label>
+          <input
+            class="search-input"
+            type="search"
+            placeholder="Поиск блюд..."
+            [value]="searchQuery()"
+            (input)="onSearch($event)"
+            autocomplete="off"
+            aria-label="Поиск блюд"
+          />
+          @if (searchQuery()) {
+            <button class="search-clear" (click)="clearSearch()" aria-label="Очистить поиск">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          }
+        </label>
 
-    <!-- Category tabs -->
-    <nav class="categories-scroll" aria-label="Фильтр по категориям">
-      <button
-        class="cat-tab"
-        [class.active]="selectedCategoryId() === null"
-        (click)="selectCategory(null)"
-      >Всё меню</button>
+        <!-- Category tabs -->
+        <nav class="categories-scroll" aria-label="Фильтр по категориям">
+          <button
+            class="cat-tab"
+            [class.active]="selectedCategoryId() === null"
+            (click)="selectCategory(null)"
+          >Популярное</button>
 
-      @for (cat of categories(); track cat.id) {
-        <button
-          class="cat-tab"
-          [class.active]="selectedCategoryId() === cat.id"
-          (click)="selectCategory(cat.id)"
-        >{{ cat.name }}</button>
-      }
-    </nav>
+          @for (cat of categories(); track cat.id) {
+            <button
+              class="cat-tab"
+              [class.active]="selectedCategoryId() === cat.id"
+              (click)="selectCategory(cat.id)"
+            >{{ cat.name }}</button>
+          }
+        </nav>
 
-  </div>
+      </div><!-- /menu-controls -->
 
-  <!-- ── Main content ────────────────────────────────────────────────── -->
-  <main class="menu-content">
+      <!-- ── Products ──────────────────────────────────────────────────── -->
+      <main class="menu-content">
 
-    @if (loading()) {
+        @if (loading()) {
+          <div class="product-grid">
+            @for (s of skeletons; track s) {
+              <div class="skeleton-card">
+                <div class="skeleton-img"></div>
+                <div class="skeleton-body">
+                  <div class="skeleton-line skeleton-line--long"></div>
+                  <div class="skeleton-line skeleton-line--medium"></div>
+                  <div class="skeleton-line skeleton-line--short"></div>
+                </div>
+              </div>
+            }
+          </div>
 
-      <!-- Skeleton grid -->
-      <div class="product-grid">
-        @for (s of skeletons; track s) {
-          <div class="skeleton-card">
-            <div class="skeleton-img"></div>
-            <div class="skeleton-body">
-              <div class="skeleton-line skeleton-line--long"></div>
-              <div class="skeleton-line skeleton-line--medium"></div>
-              <div class="skeleton-line skeleton-line--short"></div>
-            </div>
+        } @else if (products().length === 0) {
+          <div class="empty-state">
+            <span class="empty-icon" aria-hidden="true">🍽️</span>
+            <p class="empty-title">Ничего не найдено</p>
+            <p class="empty-text">Попробуйте изменить категорию или поисковый запрос</p>
+            @if (searchQuery() || selectedCategoryId() !== null) {
+              <button class="reset-btn" (click)="clearSearch(); selectCategory(null)">
+                Сбросить фильтры
+              </button>
+            }
+          </div>
+
+        } @else {
+          <div class="product-grid">
+            @for (product of products(); track product.id) {
+              <article
+                class="product-card"
+                (click)="openProduct(product.id)"
+                tabindex="0"
+                (keydown.enter)="openProduct(product.id)"
+                [attr.aria-label]="product.name"
+              >
+                <div class="card-img-wrap">
+                  @if (product.imageUrl) {
+                    <img [src]="product.imageUrl" [alt]="product.name" class="card-img" loading="lazy" />
+                  } @else {
+                    <div class="card-img-placeholder" aria-hidden="true">🍽️</div>
+                  }
+                  @if (product.hasSizes) {
+                    <span class="card-badge">На выбор</span>
+                  }
+                </div>
+
+                <div class="card-body">
+                  <p class="card-name">{{ product.name }}</p>
+                  @if (product.weightGrams) {
+                    <p class="card-meta">{{ product.weightGrams }}&thinsp;г</p>
+                  }
+                  <div class="card-footer">
+                    <span class="card-price">от {{ product.price | number:'1.0-0' }}&thinsp;₽</span>
+                    <button
+                      class="add-btn"
+                      (click)="onAddToCart($event, product)"
+                      [attr.aria-label]="(product.hasSizes ? 'Выбрать' : 'В корзину') + ': ' + product.name"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                           stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </article>
+            }
           </div>
         }
-      </div>
 
-    } @else if (products().length === 0) {
+      </main>
 
-      <!-- Empty state -->
-      <div class="empty-state">
-        <span class="empty-icon" aria-hidden="true">🍽️</span>
-        <p class="empty-title">Ничего не найдено</p>
-        <p class="empty-text">Попробуйте изменить категорию или поисковый запрос</p>
-        @if (searchQuery() || selectedCategoryId() !== null) {
-          <button class="reset-btn" (click)="clearSearch(); selectCategory(null)">
-            Сбросить фильтры
-          </button>
-        }
-      </div>
+    </div><!-- /menu-area -->
 
-    } @else {
+    <!-- ── Cart sidebar (desktop only) ──────────────────────────────────── -->
+    @if (isDesktop()) {
+      <aside class="cart-sidebar" aria-label="Корзина">
+        <div class="cart-panel">
 
-      <!-- Product grid -->
-      <div class="product-grid">
-        @for (product of products(); track product.id) {
-          <article
-            class="product-card"
-            (click)="openProduct(product.id)"
-            tabindex="0"
-            (keydown.enter)="openProduct(product.id)"
-            [attr.aria-label]="product.name"
-          >
-            <!-- Image -->
-            <div class="card-img-wrap">
-              @if (product.imageUrl) {
-                <img [src]="product.imageUrl" [alt]="product.name" class="card-img" loading="lazy" />
+          <h2 class="cart-panel-title">Корзина</h2>
+
+          <!-- Delivery type toggle -->
+          <div class="delivery-toggle">
+            <button
+              class="delivery-btn"
+              [class.active]="!isDelivery()"
+              (click)="setDeliveryType('Pickup')"
+              role="radio"
+              [attr.aria-checked]="!isDelivery()"
+            >
+              <span class="delivery-btn-label">Самовывоз</span>
+              <span class="delivery-btn-meta">0&thinsp;₽ · 30-40 мин</span>
+            </button>
+            <button
+              class="delivery-btn"
+              [class.active]="isDelivery()"
+              (click)="setDeliveryType('Delivery')"
+              role="radio"
+              [attr.aria-checked]="isDelivery()"
+            >
+              <span class="delivery-btn-label">Доставка</span>
+              <span class="delivery-btn-meta">350&thinsp;₽ · 50-70 мин</span>
+            </button>
+          </div>
+
+          <!-- Address row -->
+          <div class="address-row">
+            <svg class="address-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <span class="address-text">
+              @if (isDelivery() && selectedAddress()) {
+                {{ selectedAddress()!.street }}
               } @else {
-                <div class="card-img-placeholder" aria-hidden="true">🍽️</div>
+                ул. Пушкина, 100
               }
-              @if (product.hasSizes) {
-                <span class="card-badge">На выбор</span>
-              }
+            </span>
+            <button class="address-change-btn" (click)="openAddresses()">Изменить</button>
+          </div>
+
+          <!-- Time section -->
+          <div class="sidebar-section">
+            <p class="sidebar-section-title">Время выдачи</p>
+            <div class="time-tabs">
+              <button
+                class="time-tab"
+                [class.active]="timeMode() === 'asap'"
+                (click)="setTimeMode('asap'); selectedTime.set(null)"
+              >Как можно скорее</button>
+              <button
+                class="time-tab"
+                [class.active]="selectedTime() === '11:00'"
+                (click)="setTimeMode('scheduled'); selectedTime.set('11:00')"
+              >11:00</button>
+              <button
+                class="time-tab"
+                [class.active]="selectedTime() === '12:00'"
+                (click)="setTimeMode('scheduled'); selectedTime.set('12:00')"
+              >12:00</button>
+              <button
+                class="time-tab"
+                [class.active]="timeMode() === 'scheduled' && selectedTime() !== '11:00' && selectedTime() !== '12:00'"
+                (click)="setTimeMode('scheduled'); selectedTime.set('13:00')"
+              >Другое</button>
             </div>
+          </div>
 
-            <!-- Body -->
-            <div class="card-body">
-              <p class="card-name">{{ product.name }}</p>
-
-              @if (product.description) {
-                <p class="card-desc">{{ product.description }}</p>
-              }
-
-              @if (product.weightGrams || product.calories) {
-                <p class="card-meta">
-                  @if (product.weightGrams) { <span>{{ product.weightGrams }}&thinsp;г</span> }
-                  @if (product.weightGrams && product.calories) { <span class="dot">·</span> }
-                  @if (product.calories) { <span>{{ product.calories }}&thinsp;ккал</span> }
-                </p>
-              }
-
-              <div class="card-footer">
-                <span class="card-price">от {{ product.price | number:'1.0-0' }}&thinsp;₽</span>
-                <button
-                  class="add-btn"
-                  (click)="onAddToCart($event, product)"
-                  [attr.aria-label]="(product.hasSizes ? 'Выбрать' : 'В корзину') + ': ' + product.name"
-                >
-                  {{ product.hasSizes ? 'Выбрать' : 'В корзину' }}
-                </button>
-              </div>
+          <!-- Payment section -->
+          <div class="sidebar-section">
+            <p class="sidebar-section-title">Способ оплаты</p>
+            <div class="payment-tabs">
+              <button
+                class="payment-tab"
+                [class.active]="paymentMethod() === 'SBP'"
+                (click)="setPayment('SBP')"
+                aria-label="СБП"
+              >
+                <svg width="24" height="24" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+                  <rect width="40" height="40" rx="8" fill="#1D1346"/>
+                  <path d="M8 20 L15 28 L22 14 L29 20 L22 28 L15 28" stroke="#00C853" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                  <path d="M29 14 L22 14" stroke="#00C853" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+                <span>СБП</span>
+              </button>
+              <button
+                class="payment-tab"
+                [class.active]="paymentMethod() === 'Card'"
+                (click)="setPayment('Card')"
+                aria-label="Картой онлайн"
+              >
+                <svg width="24" height="24" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+                  <rect width="40" height="40" rx="8" fill="#2563EB"/>
+                  <rect x="7" y="13" width="26" height="14" rx="2" fill="none" stroke="#fff" stroke-width="2"/>
+                  <rect x="7" y="18" width="26" height="4" fill="#fff" opacity="0.35"/>
+                </svg>
+                <span>Картой онлайн</span>
+              </button>
+              <button
+                class="payment-tab"
+                aria-label="Картой курьеру"
+              >
+                <svg width="24" height="24" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+                  <rect width="40" height="40" rx="8" fill="#6366F1"/>
+                  <rect x="7" y="13" width="26" height="14" rx="2" fill="none" stroke="#fff" stroke-width="2"/>
+                  <circle cx="14" cy="24" r="2" fill="#fff" opacity="0.8"/>
+                </svg>
+                <span>Картой курьеру</span>
+              </button>
+              <button
+                class="payment-tab"
+                [class.active]="paymentMethod() === 'Cash'"
+                (click)="setPayment('Cash')"
+                aria-label="Наличными"
+              >
+                <svg width="24" height="24" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+                  <rect width="40" height="40" rx="8" fill="#16A34A"/>
+                  <rect x="7" y="14" width="26" height="12" rx="2" fill="none" stroke="#fff" stroke-width="2"/>
+                  <circle cx="20" cy="20" r="3" stroke="#fff" stroke-width="1.5"/>
+                </svg>
+                <span>Наличными</span>
+              </button>
             </div>
-          </article>
-        }
-      </div>
+          </div>
 
+          <!-- Cart items -->
+          @if (cartItems().length > 0) {
+            <div class="sidebar-section">
+              <p class="sidebar-section-title">Товары</p>
+              <ul class="sidebar-items" role="list">
+                @for (item of cartItems(); track item.productId + '-' + (item.sizeId ?? 0)) {
+                  <li class="sidebar-item">
+                    <div class="si-img-wrap">
+                      @if (item.product?.imageUrl) {
+                        <img [src]="item.product.imageUrl" [alt]="item.product.name" class="si-img" loading="lazy" />
+                      } @else {
+                        <div class="si-img-placeholder" aria-hidden="true">🍽️</div>
+                      }
+                    </div>
+                    <div class="si-info">
+                      <p class="si-name">{{ item.product?.name }}</p>
+                      <p class="si-price">{{ item.unitPrice | number:'1.0-0' }}&thinsp;₽</p>
+                    </div>
+                    <div class="si-stepper" role="group" [attr.aria-label]="'Количество: ' + item.product?.name">
+                      <button class="si-btn" (click)="decrementItem(item)" aria-label="Уменьшить">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                          <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                      </button>
+                      <span class="si-qty">{{ item.quantity }}</span>
+                      <button class="si-btn" (click)="incrementItem(item)" aria-label="Увеличить">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                          <line x1="12" y1="5" x2="12" y2="19"/>
+                          <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+
+          <!-- Cutlery -->
+          <div class="cutlery-row">
+            <span class="cutlery-label">Столовые приборы</span>
+            <div class="si-stepper" role="group" aria-label="Столовые приборы">
+              <button class="si-btn" (click)="decrementCutlery()" [disabled]="cutleryCount() === 0" aria-label="Убрать прибор">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+              </button>
+              <span class="si-qty">{{ cutleryCount() }}</span>
+              <button class="si-btn" (click)="incrementCutlery()" aria-label="Добавить прибор">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                  <line x1="12" y1="5" x2="12" y2="19"/>
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Comment -->
+          <textarea
+            class="comment-input"
+            placeholder="Комментарий ресторану"
+            [(ngModel)]="comment"
+            rows="2"
+            maxlength="500"
+          ></textarea>
+
+          <!-- Checkout button -->
+          <button
+            class="sidebar-checkout-btn"
+            (click)="goToCheckout()"
+            [disabled]="cartItems().length === 0"
+          >
+            Далее
+            @if (cartItems().length > 0) {
+              <span class="sidebar-checkout-total">{{ cartTotal() | number:'1.0-0' }}&thinsp;₽</span>
+            }
+          </button>
+
+        </div><!-- /cart-panel -->
+      </aside>
     }
 
-  </main>
+  </div><!-- /page-body -->
 
 </div>

@@ -4,7 +4,7 @@
 $theme: mat.define-theme((
   color: (
     theme-type: light,
-    primary: mat.$orange-palette,
+    primary: mat.$green-palette,
     tertiary: mat.$blue-palette,
   ),
   typography: (
@@ -21,8 +21,8 @@ html {
 
 // ─── CSS custom properties ────────────────────────────────────────────────────
 :root {
-  --fo-primary: #ff6b00;
-  --fo-primary-light: #fff3e8;
+  --fo-primary: #55873C;
+  --fo-primary-light: #edf4e8;
   --fo-surface: #ffffff;
   --fo-bg: #f5f5f5;
   --fo-text: #1a1a1a;
