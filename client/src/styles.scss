@@ -64,9 +64,12 @@ body {
   overflow: hidden;
   box-shadow: var(--fo-shadow);
 
-  // CDK dialog panel
+  // Default: dialog children scroll within 90 vh.
+  // Components that manage their own layout (e.g. product card) override
+  // overflow and display on their :host.
   > * {
     max-height: 90vh;
     overflow-y: auto;
+    display: block;
   }
 }

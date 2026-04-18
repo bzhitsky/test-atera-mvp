@@ -17,6 +17,7 @@
   min-height: 100vh;
 }
 
+// ── Page shell (mobile: full-page flex column) ────────────────────────────────
 .product-page {
   display: flex;
   flex-direction: column;
@@ -56,6 +57,7 @@
   padding: 10px 12px;
   background: var(--fo-surface);
   border-bottom: 1px solid var(--fo-border);
+  flex-shrink: 0;
 }
 
 .back-btn {
@@ -75,7 +77,15 @@
   &:active { transform: scale(0.9); }
 }
 
-// ── Product layout wrapper ─────────────────────────────────────────────────────
+// ── Scrollable body (product content without footer) ─────────────────────────
+// Mobile: natural flow (full page scrolls). Desktop: flex:1 + overflow-y:auto.
+.product-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+// ── Product layout wrapper ────────────────────────────────────────────────────
 // Mobile: stacked (hero on top, card below). Desktop: 2-column grid.
 .product-layout {
   display: block;
@@ -356,11 +366,11 @@
 
 // ── Recommendations ───────────────────────────────────────────────────────────
 .recs-section {
-  padding: 20px 16px 16px;
+  padding: 16px 16px 16px;
   border-top: 1px solid var(--fo-border);
   overflow: hidden;
 
-  @media (min-width: 600px) { padding: 20px 24px 16px; }
+  @media (min-width: 600px) { padding: 16px 24px; }
 }
 
 .recs-title {
@@ -444,7 +454,7 @@
   color: var(--fo-primary);
 }
 
-// ── Sticky footer ─────────────────────────────────────────────────────────────
+// ── Sticky footer (mobile: sticky to viewport) ────────────────────────────────
 .sticky-footer {
   position: sticky;
   bottom: 0;
@@ -457,13 +467,14 @@
   border-top: 1px solid var(--fo-border);
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.07);
   transition: background 0.3s;
+  flex-shrink: 0;
 
   &.added { background: #f0fff4; }
 
   @media (min-width: 600px) { padding: 14px 24px; }
 }
 
-// ── Quantity stepper (desktop only) ───────────────────────────────────────────
+// ── Quantity stepper ──────────────────────────────────────────────────────────
 .qty-stepper {
   display: none; // hidden on mobile
   align-items: center;
@@ -551,7 +562,7 @@
   }
 }
 
-// Mobile: show short label, hide full label
+// Mobile: show short label, hide full label with price
 .btn-label-mobile  { display: inline; }
 .btn-label-desktop { display: none; }
 
@@ -626,59 +637,83 @@
 // ════════════════════════════════════════════════════════════════════════════
 @media (min-width: 1024px) {
 
+  // Host fills exactly the dialog height — overflow:hidden so only
+  // .product-body scrolls, not the host itself.
   :host {
+    width: 860px;
+    max-width: 96vw;
+    max-height: 90vh;
     min-height: unset;
-    width: 780px;
-    max-width: 95vw;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 
   .product-page {
+    flex: 1;
     min-height: unset;
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
-  // Hide mobile back bar, show close button
+  // Hide mobile back bar, show desktop close button
   .top-bar   { display: none; }
   .close-btn { display: flex; }
+
+  // ── Scrollable content area (everything above the footer) ───────────────
+  .product-body {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    scrollbar-width: thin;
+    scrollbar-color: var(--fo-border) transparent;
+  }
 
   // ── Two-column grid ─────────────────────────────────────────────────────
   .product-layout {
     display: grid;
-    grid-template-columns: 280px 1fr;
+    grid-template-columns: 360px 1fr;
     align-items: stretch;
-    min-height: 360px;
+    flex: 1;
   }
 
-  // Hero: full height of grid row, no aspect ratio
+  // Hero fills grid row height (set by right column content)
   .hero {
     aspect-ratio: unset;
     height: 100%;
-    min-height: 320px;
+    min-height: 380px;
 
+    // Remove mobile breakpoint override
     @media (min-width: 600px) { aspect-ratio: unset; }
   }
 
-  // Content card: flush against image, no overlap, scrollable
+  // Content card: flush against image, no mobile overlap
   .content-card {
     border-radius: 0;
     margin-top: 0;
-    padding: 28px 24px 16px;
-    overflow-y: auto;
+    padding: 28px 24px 20px;
   }
 
-  // Recommendations: horizontal padding to match content card
+  // Recommendations below the grid
   .recs-section {
-    padding: 16px 24px 16px;
+    padding: 16px 24px;
+    flex-shrink: 0;
   }
 
-  // ── Footer: qty stepper + button with price ──────────────────────────────
+  // ── Footer: pinned at bottom, never scrolls away ─────────────────────────
   .sticky-footer {
+    position: static; // taken out of scroll flow — always at the bottom of the flex column
     padding: 14px 24px;
   }
 
-  .qty-stepper    { display: flex; }    // show on desktop
-  .footer-price   { display: none; }   // hide on desktop
+  // Show qty stepper, hide separate price display
+  .qty-stepper    { display: flex; }
+  .footer-price   { display: none; }
 
+  // Show price inside button on desktop
   .btn-label-mobile  { display: none; }
   .btn-label-desktop { display: inline; }
 }

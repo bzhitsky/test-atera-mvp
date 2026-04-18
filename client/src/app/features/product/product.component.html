@@ -44,6 +44,9 @@
   } @else {
     @let p = product()!;
 
+    <!-- ── Scrollable body (all content except footer) ───────────────────── -->
+    <div class="product-body">
+
     <!-- Two-column layout: image (left) + info panel (right) -->
     <div class="product-layout">
 
@@ -209,7 +212,9 @@
       </section>
     }
 
-    <!-- ── Sticky footer ──────────────────────────────────────────────────── -->
+    </div><!-- /product-body -->
+
+    <!-- ── Footer (always visible, outside scroll area) ──────────────────── -->
     <div class="sticky-footer" [class.added]="addedToCart()">
 
       <!-- Quantity stepper (desktop) / price (mobile) -->
