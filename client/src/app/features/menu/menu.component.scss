@@ -20,10 +20,13 @@
 // ── Site header ───────────────────────────────────────────────────────────────
 .site-header {
   position: sticky;
+  margin-left: 40px;
+  margin-right: 40px;
   top: 0;
   z-index: 20;
   background: var(--fo-surface);
   border-bottom: 1px solid var(--fo-border);
+  border-radius: var(--fo-radius); 
 }
 
 .site-header-inner {
@@ -33,7 +36,11 @@
   padding: 10px 16px;
 
   @media (min-width: 1024px) {
-    padding: 40px 40px 20px;
+  margin-top: 40px;// 16px — как у корзины
+  border-bottom: none;  
+  padding: 16px 20px;
+  padding: 16px 24px 20px;
+
   }
 }
 
@@ -174,7 +181,7 @@
   border-bottom: 1px solid var(--fo-border);
 
   @media (min-width: 1024px) {
-    top: 105px;
+    top: 125px;
     padding: 12px 0 0;
     border-bottom: none;
     background: var(--fo-bg);
@@ -523,8 +530,8 @@
   width: 360px;
   flex-shrink: 0;
   position: sticky;
-  top: 125px; // header(~105px) + page-body top padding(20px)
-  max-height: calc(100vh - 135px);
+  top: 145px; // header(~125px) + page-body top padding(20px)
+  max-height: calc(100vh - 155px);
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--fo-border) transparent;
