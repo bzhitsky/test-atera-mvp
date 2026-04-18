@@ -107,4 +107,5 @@ export interface OrderReview {
 export interface AuthResponse {
   token: string;
   user: User;
+  isNewUser: boolean;
 }

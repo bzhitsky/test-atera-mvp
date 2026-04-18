@@ -6,7 +6,7 @@ namespace FoodOrder.API.Controllers;
 
 [ApiController]
 [Route("api/auth")]
-public class AuthController(IAuthService authService) : ControllerBase
+public class AuthController(IAuthService authService, IUserService userService) : ControllerBase
 {
     /// <summary>Отправить OTP на указанный номер телефона.</summary>
     [HttpPost("send-otp")]
@@ -21,7 +21,7 @@ public class AuthController(IAuthService authService) : ControllerBase
         return Ok(new { message = "OTP sent successfully" });
     }
 
-    /// <summary>Проверить OTP и получить JWT токен.</summary>
+    /// <summary>Проверить OTP и получить JWT токен вместе с профилем пользователя.</summary>
     [HttpPost("verify-otp")]
     [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -31,7 +31,9 @@ public class AuthController(IAuthService authService) : ControllerBase
         try
         {
             var (token, userId, isNewUser) = await authService.VerifyOtpAsync(request.Phone, request.Code, ct);
-            return Ok(new AuthResponse(token, userId, isNewUser));
+            var user = await userService.GetProfileAsync(userId, ct)
+                ?? throw new InvalidOperationException("User not found after verification");
+            return Ok(new AuthResponse(token, user, isNewUser));
         }
         catch (InvalidOperationException ex)
         {
