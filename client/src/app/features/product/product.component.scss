@@ -250,8 +250,8 @@
 .ingredient-chip {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 7px 13px;
+  gap: 5px;
+  padding: 6px 10px 6px 12px;
   border: 1.5px solid var(--fo-border);
   border-radius: 20px;
   background: var(--fo-bg);
@@ -260,24 +260,33 @@
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
 
+  // Default (ingredient is in dish): show name + × to remove
   &:hover:not(.removed) {
-    border-color: #f0b0b0;
+    border-color: #e07070;
     background: #fff5f5;
   }
 
+  // Removed: name in red, no × button
   &.removed {
     border-color: #f0b0b0;
     background: #fff0f0;
-    color: #c0a0a0;
-    text-decoration: line-through;
+    color: #d94f4f;
+    font-weight: 600;
+    padding-right: 12px; // symmetric when no × icon
   }
 }
 
-.chip-icon {
+.chip-remove-icon {
   flex-shrink: 0;
-  color: #e07070;
+  color: var(--fo-text-secondary);
+  opacity: 0.6;
+
+  .ingredient-chip:hover & {
+    color: #d94f4f;
+    opacity: 1;
+  }
 }
 
 // ── Addons list ───────────────────────────────────────────────────────────────
@@ -640,7 +649,7 @@
   // Host fills exactly the dialog height — overflow:hidden so only
   // .product-body scrolls, not the host itself.
   :host {
-    width: 860px;
+    width: 900px;
     max-width: 96vw;
     max-height: 90vh;
     min-height: unset;
@@ -673,40 +682,61 @@
   }
 
   // ── Two-column grid ─────────────────────────────────────────────────────
+  // Figma specs: padding 28px, gap 20px, image 405×405, dialog 893px.
   .product-layout {
     display: grid;
-    grid-template-columns: 360px 1fr;
-    align-items: stretch;
-    flex: 1;
+    grid-template-columns: 405px 1fr;
+    gap: 20px;
+    padding: 28px 28px 0;
+    align-items: start;  // image column doesn't stretch to content height
+    flex: none;
   }
 
-  // Hero fills grid row height (set by right column content)
+  // Hero: square image with padding (Figma: 405×405, border-radius 12px).
   .hero {
     aspect-ratio: unset;
-    height: 100%;
-    min-height: 380px;
+    height: auto;
+    min-height: unset;
+    padding: 0;
+    background: transparent;
+    align-self: start;
 
-    // Remove mobile breakpoint override
+    // Remove the 600px breakpoint override
     @media (min-width: 600px) { aspect-ratio: unset; }
   }
 
-  // Content card: flush against image, no mobile overlap
+  // Square image with rounded corners
+  .hero-img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    object-fit: cover;
+  }
+
+  .hero-placeholder {
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    height: auto;
+  }
+
+  // Content card: no mobile overlap, no extra top padding (grid provides it)
   .content-card {
     border-radius: 0;
     margin-top: 0;
-    padding: 28px 24px 20px;
+    padding: 4px 0 20px 0;
   }
 
-  // Recommendations below the grid
+  // Recommendations: match grid's horizontal padding
   .recs-section {
-    padding: 16px 24px;
+    padding: 16px 28px;
     flex-shrink: 0;
   }
 
   // ── Footer: pinned at bottom, never scrolls away ─────────────────────────
   .sticky-footer {
     position: static; // taken out of scroll flow — always at the bottom of the flex column
-    padding: 14px 24px;
+    padding: 14px 28px;
   }
 
   // Show qty stepper, hide separate price display
