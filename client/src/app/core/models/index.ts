@@ -1,7 +1,21 @@
 export interface Category {
   id: number;
   name: string;
+  imageUrl?: string;
   sortOrder: number;
+}
+
+export interface ProductListItem {
+  id: number;
+  categoryId: number;
+  name: string;
+  description?: string;
+  imageUrl?: string;
+  price: number;
+  weightGrams?: number;
+  calories?: number;
+  tags: string[];
+  hasSizes: boolean;
 }
 
 export interface ProductSize {
