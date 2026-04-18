@@ -318,6 +318,19 @@ namespace FoodOrder.Infrastructure.Migrations
                 b.Navigation("Addresses");
                 b.Navigation("Orders");
             });
+
+            modelBuilder.Entity("FoodOrder.Domain.Entities.UserCart", b =>
+            {
+                b.Property<int>("UserId").HasColumnType("integer");
+                b.Property<string>("ItemsJson").IsRequired().HasColumnType("text").HasDefaultValue("[]");
+                b.Property<DateTime>("UpdatedAt").HasColumnType("timestamp with time zone").HasDefaultValueSql("now()");
+                b.HasKey("UserId");
+                b.ToTable("user_carts");
+                b.HasOne("FoodOrder.Domain.Entities.User", "User")
+                    .WithOne().HasForeignKey("FoodOrder.Domain.Entities.UserCart", "UserId")
+                    .OnDelete(DeleteBehavior.Cascade).IsRequired();
+                b.Navigation("User");
+            });
 #pragma warning restore 612, 618
         }
     }

@@ -6,6 +6,7 @@ namespace FoodOrder.Infrastructure.Data;
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<User> Users => Set<User>();
+    public DbSet<UserCart> UserCarts => Set<UserCart>();
     public DbSet<OtpCode> OtpCodes => Set<OtpCode>();
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Product> Products => Set<Product>();
