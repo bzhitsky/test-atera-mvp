@@ -9,7 +9,8 @@
     <p>{{ error() }}</p>
     <button class="btn-primary" (click)="goToOrders()">К заказам</button>
   </div>
-} @else if (order(); as o) {
+} @else if (order()) {
+  @let o = order()!;
   <div class="page">
     <div class="card">
 

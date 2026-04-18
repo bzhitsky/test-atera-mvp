@@ -36,6 +36,8 @@ export class ProductComponent implements OnInit {
   readonly selectedAddonIds = signal<Set<number>>(new Set());
   readonly removedIngredientIds = signal<Set<number>>(new Set());
 
+  readonly quantity = signal(1);
+
   readonly selectedSize = computed(() =>
     this.product()?.sizes.find((s) => s.id === this.selectedSizeId()) ?? null
   );
@@ -49,9 +51,11 @@ export class ProductComponent implements OnInit {
     );
   });
 
-  readonly totalPrice = computed(
+  readonly unitPrice = computed(
     () => (this.product()?.price ?? 0) + (this.selectedSize()?.priceDelta ?? 0) + this.addonsTotal()
   );
+
+  readonly totalPrice = computed(() => this.unitPrice() * this.quantity());
 
   ngOnInit(): void {
     const productId = Number(this.dialogData?.id ?? this.id);
@@ -77,6 +81,14 @@ export class ProductComponent implements OnInit {
           this.selectedSizeId.set(p.sizes[0].id);
         }
       });
+  }
+
+  increaseQty(): void {
+    this.quantity.update((q) => q + 1);
+  }
+
+  decreaseQty(): void {
+    this.quantity.update((q) => Math.max(1, q - 1));
   }
 
   selectSize(id: number): void {
@@ -120,14 +132,18 @@ export class ProductComponent implements OnInit {
       addons: p.addons,
     };
 
-    this.cartService.addItem(cartProduct, {
+    const options = {
       sizeId: size?.id,
       sizeLabel: size?.label,
       addonIds: [...this.selectedAddonIds()],
       removedIngredients: [...this.removedIngredientIds()]
         .map((id) => p.ingredients.find((i) => i.id === id)?.name ?? '')
         .filter(Boolean),
-    });
+    };
+
+    for (let i = 0; i < this.quantity(); i++) {
+      this.cartService.addItem(cartProduct, options);
+    }
 
     this.addedToCart.set(true);
     setTimeout(() => this.goBack(), 600);
