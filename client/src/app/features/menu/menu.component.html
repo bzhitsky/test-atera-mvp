@@ -131,7 +131,7 @@
             class="cat-tab"
             [class.active]="selectedCategoryId() === null"
             (click)="selectCategory(null)"
-          >Популярное</button>
+          >Все блюда</button>
 
           @for (cat of categories(); track cat.id) {
             <button
